@@ -1,0 +1,103 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.API", "Triggerless.API\Triggerless.API.csproj", "{11B74C15-E28A-49AF-B21D-9917DFF87D22}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{48174FDB-4E0D-4816-85B9-66FDF2ABE21F}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mowdown", "Mowdown\Mowdown.csproj", "{4D66E239-15B8-48B4-8DC2-B563F62430AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.Tests", "Triggerless.Tests\Triggerless.Tests.csproj", "{304F9186-839F-4B72-B14D-328C5C5EE391}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.Services.Common", "Triggerless.ImvuClient\Triggerless.Services.Common.csproj", "{288498D2-5C6C-474C-A58D-531B63E77E13}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.Models", "Triggerless.Models\Triggerless.Models.csproj", "{C5D16C73-636F-41CC-AD81-5ED0AF0D54E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.ViewModels", "Triggerless.ViewModels\Triggerless.ViewModels.csproj", "{85BCD626-3676-4BE0-8750-30FC418DF5D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.Services.Server", "Triggerless.Services.Server\Triggerless.Services.Server.csproj", "{2AC77230-17B1-4467-9C01-FFA8FFC290E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.Services.Client", "Triggerless.Services.Client\Triggerless.Services.Client.csproj", "{4327A996-4B94-4C40-BABC-6708CA9389E6}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "expose-outfits-reactjs", "expose-outfits-reactjs\", "{9CABB2B4-1451-4655-BF58-86FD0C5EA710}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_51653"
+		Debug.AspNetCompiler.PhysicalPath = "expose-outfits-reactjs\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51653\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_51653"
+		Release.AspNetCompiler.PhysicalPath = "expose-outfits-reactjs\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51653\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "51653"
+		SlnRelativePath = "expose-outfits-reactjs\"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.XAFLib", "XAFLib\Triggerless.XAFLib.csproj", "{A1312551-9229-4C9C-B2EB-5B5BF4D5ADAE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{11B74C15-E28A-49AF-B21D-9917DFF87D22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11B74C15-E28A-49AF-B21D-9917DFF87D22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11B74C15-E28A-49AF-B21D-9917DFF87D22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11B74C15-E28A-49AF-B21D-9917DFF87D22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D66E239-15B8-48B4-8DC2-B563F62430AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D66E239-15B8-48B4-8DC2-B563F62430AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D66E239-15B8-48B4-8DC2-B563F62430AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D66E239-15B8-48B4-8DC2-B563F62430AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{304F9186-839F-4B72-B14D-328C5C5EE391}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{304F9186-839F-4B72-B14D-328C5C5EE391}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{304F9186-839F-4B72-B14D-328C5C5EE391}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{304F9186-839F-4B72-B14D-328C5C5EE391}.Release|Any CPU.Build.0 = Release|Any CPU
+		{288498D2-5C6C-474C-A58D-531B63E77E13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{288498D2-5C6C-474C-A58D-531B63E77E13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{288498D2-5C6C-474C-A58D-531B63E77E13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{288498D2-5C6C-474C-A58D-531B63E77E13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5D16C73-636F-41CC-AD81-5ED0AF0D54E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5D16C73-636F-41CC-AD81-5ED0AF0D54E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5D16C73-636F-41CC-AD81-5ED0AF0D54E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5D16C73-636F-41CC-AD81-5ED0AF0D54E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85BCD626-3676-4BE0-8750-30FC418DF5D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85BCD626-3676-4BE0-8750-30FC418DF5D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85BCD626-3676-4BE0-8750-30FC418DF5D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85BCD626-3676-4BE0-8750-30FC418DF5D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AC77230-17B1-4467-9C01-FFA8FFC290E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AC77230-17B1-4467-9C01-FFA8FFC290E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AC77230-17B1-4467-9C01-FFA8FFC290E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AC77230-17B1-4467-9C01-FFA8FFC290E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4327A996-4B94-4C40-BABC-6708CA9389E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4327A996-4B94-4C40-BABC-6708CA9389E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4327A996-4B94-4C40-BABC-6708CA9389E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4327A996-4B94-4C40-BABC-6708CA9389E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CABB2B4-1451-4655-BF58-86FD0C5EA710}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CABB2B4-1451-4655-BF58-86FD0C5EA710}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CABB2B4-1451-4655-BF58-86FD0C5EA710}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CABB2B4-1451-4655-BF58-86FD0C5EA710}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{A1312551-9229-4C9C-B2EB-5B5BF4D5ADAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1312551-9229-4C9C-B2EB-5B5BF4D5ADAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1312551-9229-4C9C-B2EB-5B5BF4D5ADAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1312551-9229-4C9C-B2EB-5B5BF4D5ADAE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E5742B0B-C68F-41D2-8C4A-2FEACFBD8347}
+	EndGlobalSection
+EndGlobal

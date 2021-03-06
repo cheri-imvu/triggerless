@@ -1,0 +1,261 @@
+.mountNode {
+  color: #333;
+}
+
+.app {
+	width: 480px;
+  height: 440px;
+  border: solid 1px #CCCCCC;
+}
+
+.title_bar {
+	height: 28px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  color: black;
+  overflow: hide;
+  width: 100%;
+  background-color: #57574F;
+  color: white;
+}
+
+.years_block {
+  display: inline-block;
+  font-size: 30px;
+  line-height: 28px;
+  vertical-align: bottom;
+  padding: 0px 3px;
+  background-color: #fed538;
+  font-weight: 700;
+  color: black;
+}
+
+.years_text {
+  display: inline-block;
+  font-size: 10px;
+  line-height: 10px;
+  vertical-align: bottom;
+  background-color: #fed538;
+  font-weight: 700;
+  height: 28px;
+  vertical-align: middle;
+  width: 45px;
+  padding-top:5px;
+  color: black;
+}
+
+.avatar_title {
+	display: inline-block;
+  height: 28px;
+	vertical-align:top;
+  font-size: 13px;
+  padding-top: 4px;
+  padding-left: 10px;  
+}
+.avatar_image {
+	display: inline-block;
+  margin-left: 20px;
+  margin-top: 20px;
+}
+
+.user_info {
+	display: inline-block;
+  vertical-align: top;
+  padding-top: 15px;
+  padding-left: 10px;
+}
+
+.ap-sprite {
+	display: inline-block;
+	background-image: url(http://webasset-akm.imvu.com/asset/2fc8746dc98e77f2/common/img/badges_sprite.png);
+  background-position: -23px -1px;
+  height: 18px;
+  line-height: 16px;
+  width: 22px;
+}
+.av-sprite {
+	display: inline-block;
+	background-image: url(http://webasset-akm.imvu.com/asset/2fc8746dc98e77f2/common/img/badges_sprite.png);
+  background-position: -23px -22px;
+  height: 18px;
+  line-height: 16px;
+  width: 31px;
+}
+.vip-sprite {
+	display: inline-block;
+	background-image: url(http://webasset-akm.imvu.com/asset/2fc8746dc98e77f2/common/img/badges_sprite.png);
+  background-position: -23px -43px;
+  height: 18px;
+  line-height: 16px;
+  width: 25px;
+}
+.marriage-sprite {
+	display: inline-block;
+	background-image: url(http://webasset-akm.imvu.com/asset/2fc8746dc98e77f2/common/img/badges_sprite.png);
+  background-position: -27px -192px;
+  height: 18px;
+  line-height: 16px;
+  width: 30px;
+  margin-left: 3px;
+}
+
+.online-img {
+	display: inline-block;
+	background-image: url(http://webasset-akm.imvu.com/asset/2fc8746dc98e77f2/common/img/badges_sprite.png);
+  background-position: -1px -1px;
+  height: 19px;
+  line-height: 16px;
+  width: 18px;
+  vertical-align: middle;
+  margin-left: 2px;
+}
+
+.link {
+	color: #4499fe;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.shop-link {
+	display: inline-block;
+  font-size: 14px;
+  font-weight: 700;
+  margin-right: 5px;
+}
+.link:hover {
+	text-decoration: underline;
+}
+
+
+.shop-icon {
+	display: inline-block;
+	background-image: url(http://webasset-akm.imvu.com/asset/e5792331821ab3f3/common/img/sprites/card_icons.png);
+  background-position: -184px -1px;
+  height: 14px;
+  line-height: 16px;
+  width: 18px;
+  vertical-align: middle;
+  margin-left: 2px;
+  position: relative;
+  top: -2px;
+}
+
+.shop-arrow {
+	display: inline-block;
+	background-image: url(http://webasset-akm.imvu.com/asset/e5792331821ab3f3/common/img/sprites/card_icons.png);
+  background-position: -203px -1px;
+  height: 14px;
+  line-height: 16px;
+  width: 14px;
+  vertical-align: middle;
+  margin-left: 2px;
+  position: relative;
+  top: -2px;
+}
+
+.badgecount-sprite {
+	display: inline-block;
+	background-image: url(http://webasset-akm.imvu.com/asset/2fc8746dc98e77f2/common/img/badges_sprite.png);
+  background-position: -60px 0px;
+  height: 19px;
+  line-height: 16px;
+  width: 34px;
+  font-size: 10px;
+  padding-left: 19px;
+  position: relative;
+  top: -6px;
+  margin-left: 1px;
+}
+
+.level-0 .badgecount-sprite { background-position: -60px 0px; }
+.level-1 .badgecount-sprite { background-position: -60px -21px; }
+.level-2 .badgecount-sprite { background-position: -60px -42px; }
+.level-3 .badgecount-sprite { background-position: -60px -63px; }
+.level-4 .badgecount-sprite { background-position: -60px -84px; }
+.level-5 .badgecount-sprite { background-position: -60px -105px; }
+.level-6 .badgecount-sprite { background-position: -60px -126px; }
+.level-7 .badgecount-sprite { background-position: -60px -147px; }
+.level-8 .badgecount-sprite { background-position: -60px -168px; }
+.level-9 .badgecount-sprite { background-position: -60px -189px; }
+.level-10 .badgecount-sprite { background-position: -60px -210px; }
+
+.badge-text {
+	margin-left: 20px;
+  font-size: 10px;
+  padding-top: 7px;
+}
+
+.badge-panel {
+	margin-left: 20px;
+  background-image: url(//webasset-akm.imvu.com/asset/1c0815219bbe4245/common/img/badges_background.png);
+  width: 440px;
+  height: 100px;
+  position: relative;
+  
+}
+.body {
+	background-color: transparent;  
+  color: #57574f;
+  height: 410px;
+  font-family: Tahoma;
+}
+
+.body.show-paper.wallpaper0 { 
+    background-color: transparent;
+}
+.body.show-paper.wallpaper1 { 
+    background-color: #b2ecf1;
+}
+.body.show-paper.wallpaper2 { 
+    background-color: #0e2f61;
+    color: white;
+}
+.body.show-paper.wallpaper3 { 
+    background-color: #ffd4e2;
+}
+.body.show-paper.wallpaper4 { 
+    background-color: #630707;
+    color: white;
+}
+.body.show-paper.wallpaper5 { 
+    background-color: #f7eec3;
+}
+.body.show-paper.wallpaper6 { 
+    background-color: #10522a;
+    color: white;
+}
+.body.show-paper.wallpaper7 { 
+    background-color: #bbffe8;
+}
+.body.show-paper.wallpaper8 { 
+    background-color: #313131;
+    color: white;
+}
+.body.show-paper.wallpaper9 { 
+    background: #a8a8a8; /* Old browsers */
+    background: -moz-linear-gradient(-45deg,  #a8a8a8 0%, #ededed 50%, #a8a8a8 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#a8a8a8), color-stop(50%,#ededed), color-stop(100%,#a8a8a8)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(-45deg,  #a8a8a8 0%,#ededed 50%,#a8a8a8 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(-45deg,  #a8a8a8 0%,#ededed 50%,#a8a8a8 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(-45deg,  #a8a8a8 0%,#ededed 50%,#a8a8a8 100%); /* IE10+ */
+    background: linear-gradient(135deg,  #a8a8a8 0%,#ededed 50%,#a8a8a8 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a8a8a8', endColorstr='#a8a8a8',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+.body.show-paper.wallpaper10 { 
+    background: #bb8344; /* Old browsers */
+    background: -moz-linear-gradient(-45deg,  #bb8344 0%, #ffb65e 30%, #ffee7c 50%, #ffb65e 70%, #bb8344 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#bb8344), color-stop(30%,#ffb65e), color-stop(50%,#ffee7c), color-stop(70%,#ffb65e), color-stop(100%,#bb8344)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(-45deg,  #bb8344 0%,#ffb65e 30%,#ffee7c 50%,#ffb65e 70%,#bb8344 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(-45deg,  #bb8344 0%,#ffb65e 30%,#ffee7c 50%,#ffb65e 70%,#bb8344 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(-45deg,  #bb8344 0%,#ffb65e 30%,#ffee7c 50%,#ffb65e 70%,#bb8344 100%); /* IE10+ */
+    background: linear-gradient(135deg,  #bb8344 0%,#ffb65e 30%,#ffee7c 50%,#ffb65e 70%,#bb8344 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bb8344', endColorstr='#bb8344',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+.body.show-paper.wallpaper11 { 
+    background-color: #e9d5fa;
+}
+.body.show-paper.wallpaper12 { 
+    background-color: #35073d;
+    color: white;
+}
+
+

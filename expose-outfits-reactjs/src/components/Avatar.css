@@ -1,0 +1,26 @@
+.av-ctr {
+    padding: 20px;
+    background-color: transparent;
+}
+
+.img-photo {
+    height: 110px;
+    width: auto;
+}
+
+.av-name {
+    padding: 10px;
+    display: inline-block;
+    font-size: 1.4em;
+    color: powderblue;
+    background-color: #222222;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.av-photo {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 10px;
+    display: inline-block;
+}

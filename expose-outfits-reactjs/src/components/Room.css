@@ -1,0 +1,13 @@
+.room-ctr {
+    padding: 20px;
+    background-color: transparent;
+}
+
+.room-name {
+    padding: 10px;
+    display: inline-block;
+    vertical-align: top;
+    font-size: 1.4em;
+    color: powderblue;
+    background-color: #222222;
+}

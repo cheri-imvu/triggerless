@@ -1,0 +1,13 @@
+.product-ctr {
+    display: inline-block;
+    padding: 5px;
+    margin: solid 1px #111111;
+    background-color: powderblue;
+    margin: 3px;
+    font-size: 0.8em;
+    color: #366
+}
+
+.product-img {
+    text-align: center;
+}

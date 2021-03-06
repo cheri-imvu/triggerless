@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A1312551-9229-4C9C-B2EB-5B5BF4D5ADAE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Triggerless.XAFLib</RootNamespace>
+    <AssemblyName>Triggerless.XAFLib</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Animation.cs" />
+    <Compile Include="Bone.cs" />
+    <Compile Include="BoneTags.cs" />
+    <Compile Include="IAFFile.cs" />
+    <Compile Include="IAFXML.cs" />
+    <Compile Include="Matrix3D.cs" />
+    <Compile Include="Mesh.cs" />
+    <Compile Include="MeshFile.cs" />
+    <Compile Include="MorphAnimation.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Skeleton.cs" />
+    <Compile Include="Structures.cs" />
+    <Compile Include="Template\Action.cs" />
+    <Compile Include="Template\ActionAttributes.cs" />
+    <Compile Include="Template\ActionDefinition.cs" />
+    <Compile Include="Template\ActionEnsemblePicking.cs" />
+    <Compile Include="Template\ActionPerturbationRange.cs" />
+    <Compile Include="Template\ActionType.cs" />
+    <Compile Include="Template\Definition.cs" />
+    <Compile Include="Template\EffectAdjustment.cs" />
+    <Compile Include="Template\EffectCompositionFunction.cs" />
+    <Compile Include="Template\EnsembleAttributes.cs" />
+    <Compile Include="Template\EnsembleDefintion.cs" />
+    <Compile Include="Template\ActionEnsembleTermination.cs" />
+    <Compile Include="Template\IndexXmlGenerator.cs" />
+    <Compile Include="Template\MorphAnimationEffect.cs" />
+    <Compile Include="Template\MorphEffectControls.cs" />
+    <Compile Include="Template\SkeletalAnimationEffect.cs" />
+    <Compile Include="Template\SkeletalEffectControls.cs" />
+    <Compile Include="Template\Template.cs" />
+    <Compile Include="XAFFile.cs" />
+    <Compile Include="XAFLibExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Skeleton.xsf" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
