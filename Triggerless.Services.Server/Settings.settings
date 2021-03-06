@@ -3,6 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="osCsid" Type="System.String" Scope="Application">
+      <!-- IMPORTANT NOTE - FOR THIS TO WORK YOU NEED YOUR OWN osCsid BROWSER COOKIE, I'm not sharing mine with you, sorry -->
       <Value Profile="(Default)">ABCDEFGHIJKLMNOPQRSTUVWX</Value>
     </Setting>
   </Settings>
