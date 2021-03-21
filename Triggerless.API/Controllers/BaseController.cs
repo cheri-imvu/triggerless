@@ -12,11 +12,11 @@ namespace Triggerless.API.Controllers
 {
     public class BaseController: ApiController
     {
-        protected HttpResponseMessage GetResponse(string content)
+        protected HttpResponseMessage GetResponse(string json)
         {
             var response = Request.CreateResponse(HttpStatusCode.OK);
             response.Headers.Add("Access-Control-Allow-Origin", "*");
-            response.Content = new StringContent(content, Encoding.UTF8, "application/json");
+            response.Content = new StringContent(json, Encoding.UTF8, "application/json");
             return response;
         }
 

@@ -50,6 +50,7 @@
     <Compile Include="ImvuUser.cs" />
     <Compile Include="LogConversation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TriggerlessRadio.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -44,6 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BootstersDbConnection.cs" />
+    <Compile Include="BootstersDbService.cs" />
     <Compile Include="ImvuApiClient.cs" />
     <Compile Include="ImvuApiService.cs" />
     <Compile Include="ImvuPageClient.cs" />
