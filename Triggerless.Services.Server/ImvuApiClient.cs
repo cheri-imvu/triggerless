@@ -29,7 +29,7 @@ namespace Triggerless.Services.Server
                 Name = $"Product {productId}",
                 CreatorId = 0,
                 CreatorName = "FakeUser",
-                ProductImage = "http://localhost:61120/Content/icon.png"
+                ProductImage = "https://triggerless.com/Content/icon.png"
             };
 #endif
 
@@ -113,7 +113,7 @@ namespace Triggerless.Services.Server
             return new ImvuUser { 
                 Id = userId,
                 AvatarName = $"User{userId}",
-                Photo = "http;//localhost:61120/Content/avatar.png"
+                Photo = "https://triggerless.com/Content/avatar.png"
             };
 #endif
 #pragma warning disable CS0162 // Unreachable code detected

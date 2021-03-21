@@ -26,8 +26,6 @@ namespace Triggerless.Services.Server {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("ABCDEFGHIJKLMNOPQRSTUVWX")]
-        // <!-- IMPORTANT NOTE - FOR THIS TO WORK YOU NEED YOUR OWN osCsid BROWSER COOKIE, I'm not sharing mine with you, sorry -->
-
         public string osCsid {
             get {
                 return ((string)(this["osCsid"]));

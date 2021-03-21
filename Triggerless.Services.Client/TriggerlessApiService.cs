@@ -13,8 +13,8 @@ namespace Triggerless.Services.Client
     {
         public TriggerlessApiService()
         {
-            _baseAddress = "http://localhost:61120/api/";
-            //_baseAddress = "https://triggerless.com/api/";
+            //_baseAddress = "http://localhost:61120/api/";
+            _baseAddress = "https://triggerless.com/api/";
             _handler = new HttpClientHandler();
             _client = new HttpClient(_handler) { BaseAddress = new Uri(_baseAddress) };
         }
