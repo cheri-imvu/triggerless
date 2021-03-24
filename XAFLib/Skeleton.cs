@@ -4,7 +4,8 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 
-namespace XAFLib {
+namespace Triggerless.XAFLib
+{
     public class Skeleton {
 
         private List<Bone> _bones;

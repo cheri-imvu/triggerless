@@ -5,7 +5,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace XAFLib
+namespace Triggerless.XAFLib
 {
 
     public class Pid {

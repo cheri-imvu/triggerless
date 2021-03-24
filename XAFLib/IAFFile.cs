@@ -2,7 +2,7 @@
 using System.Xml;
 // ReSharper disable PossibleNullReferenceException
 
-namespace XAFLib
+namespace Triggerless.XAFLib
 {
     public class IAFFile {
 

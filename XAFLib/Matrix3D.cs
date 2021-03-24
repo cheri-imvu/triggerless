@@ -1,6 +1,7 @@
 ﻿using System;
 
-namespace XAFLib {
+namespace Triggerless.XAFLib
+{
     public class Matrix3D {
         private const float TO_DEGREES = (float) (180 / Math.PI);
         private const float TO_RADIANS = (float) (Math.PI / 180);

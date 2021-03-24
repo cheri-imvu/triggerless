@@ -1,6 +1,7 @@
 ﻿using System;
 
-namespace XAFLib {
+namespace Triggerless.XAFLib
+{
     [Flags]
     public enum BoneTagValue : long {
         None = 0,

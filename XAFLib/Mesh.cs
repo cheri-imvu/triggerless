@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace XAFLib
+namespace Triggerless.XAFLib
 {
     public class Mesh {
         public int NumSubMesh { get; set; }

@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace XAFLib
+namespace Triggerless.XAFLib
 {
     [Serializable]
     public class Action: IndexXmlGenerator {

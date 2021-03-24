@@ -5,7 +5,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
-namespace XAFLib {
+namespace Triggerless.XAFLib
+{
     public class XAFFile {
         public const string HEADER = "<HEADER MAGIC=\"XAF\" VERSION=\"919\"/>";
 

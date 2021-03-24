@@ -3,7 +3,8 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace XAFLib {
+namespace Triggerless.XAFLib
+{
     // ReSharper disable InconsistentNaming
     public class IAFXML {
         public static imvu Parse(string filename) {

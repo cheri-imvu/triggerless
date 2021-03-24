@@ -2,7 +2,7 @@
 using System.Text;
 using System.Xml;
 
-namespace XAFLib
+namespace Triggerless.XAFLib
 {
     [Serializable]
     public class Definition : IndexXmlGenerator

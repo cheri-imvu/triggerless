@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace XAFLib
+namespace Triggerless.XAFLib
 {
     [Serializable]
     public struct Quaternion

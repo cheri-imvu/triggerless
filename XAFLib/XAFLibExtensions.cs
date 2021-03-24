@@ -2,7 +2,7 @@
 using System.Text;
 using System.Xml;
 
-namespace XAFLib
+namespace Triggerless.XAFLib
 {
     public static class XAFLibExtensions {
         public static bool IsNearlyEqual(this float x, float y) {

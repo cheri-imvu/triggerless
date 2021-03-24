@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace XAFLib {
+namespace Triggerless.XAFLib
+{
     public class Bone {
         public Bone(Skeleton owner) {
             Owner = owner;

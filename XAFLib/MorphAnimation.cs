@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
-namespace XAFLib
+namespace Triggerless.XAFLib
 {
     public class MorphAnimation
     {
