@@ -72,6 +72,7 @@
     <Compile Include="Template\MorphEffectControls.cs" />
     <Compile Include="Template\SkeletalAnimationEffect.cs" />
     <Compile Include="Template\SkeletalEffectControls.cs" />
+    <Compile Include="Template\Sound.cs" />
     <Compile Include="Template\Template.cs" />
     <Compile Include="XAFFile.cs" />
     <Compile Include="XAFLibExtensions.cs" />

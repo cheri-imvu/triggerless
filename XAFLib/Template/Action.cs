@@ -10,8 +10,10 @@ namespace Triggerless.XAFLib
     public class Action: IndexXmlGenerator {
         public Definition Definition { get; }
         public string Name { get; set; }
+        public Sound Sound { get; set; }
         public Action() {
             Definition = new Definition();
+            Sound = new Sound();
         }
 
         public Action Clone()
@@ -33,6 +35,11 @@ namespace Triggerless.XAFLib
                 XmlElement name = parent.OwnerDocument.CreateElement("Name");
                 name.InnerText = Name;
                 result.AppendChild(name);
+
+                if (!string.IsNullOrWhiteSpace(Sound.Name))
+                {
+                    Sound.AddXml(result);
+                }
                 parent.AppendChild(result);
             }
         }
@@ -49,6 +56,8 @@ namespace Triggerless.XAFLib
             if (nameEl != null) Name = nameEl.InnerText;
             XmlNode d = node.SelectSingleNode("Definition");
             if (d != null) Definition.LoadXml(d);
+            XmlElement sound = node.SelectSingleNode("Sound") as XmlElement;
+            if (sound != null) Sound.LoadXml(sound);
         }
     }
 
