@@ -71,6 +71,7 @@
     <Compile Include="StoreTests.cs" />
     <Compile Include="TriggerlessApiClientTests.cs" />
     <Compile Include="UserControllerTests.cs" />
+    <Compile Include="XAFLibQuickies.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Triggerless.API\Triggerless.API.csproj">
@@ -92,6 +93,10 @@
     <ProjectReference Include="..\Triggerless.Services.Server\Triggerless.Services.Server.csproj">
       <Project>{2ac77230-17b1-4467-9c01-ffa8ffc290e0}</Project>
       <Name>Triggerless.Services.Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XAFLib\Triggerless.XAFLib.csproj">
+      <Project>{a1312551-9229-4c9c-b2eb-5b5bf4d5adae}</Project>
+      <Name>Triggerless.XAFLib</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

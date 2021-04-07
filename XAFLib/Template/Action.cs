@@ -31,7 +31,12 @@ namespace Triggerless.XAFLib
             if (parent == null || !index.HasValue) return;
             if (parent.OwnerDocument != null) {
                 XmlElement result = parent.OwnerDocument.CreateElement("Action" + index);
-                Definition.AddXml(result);
+
+                if (Definition.ActionDefinition.Ensembles.Count > 0)
+                {
+                    Definition.AddXml(result);
+                }
+
                 XmlElement name = parent.OwnerDocument.CreateElement("Name");
                 name.InnerText = Name;
                 result.AppendChild(name);
@@ -47,6 +52,7 @@ namespace Triggerless.XAFLib
         public override void AppendText(StringBuilder sb, int? index = null) {
             sb.AppendUnixLine(Open("Action" + index));
             Definition.AppendText(sb);
+            Sound.AppendText(sb);
             sb.AppendUnixLine(Open("Name") + Name + Close("Name"));
             sb.AppendUnixLine(Close("Action" + index));
         }
