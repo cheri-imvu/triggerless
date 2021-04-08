@@ -13,6 +13,18 @@ namespace Triggerless.API
             // Web API routes
             config.MapHttpAttributeRoutes();
 
+
+            config.Routes.MapHttpRoute(
+              name: "RipLog",
+              routeTemplate: "api/riplog/summary",
+              defaults: new { controller = "riplog", action = "RipLogSummary" }
+            );
+            config.Routes.MapHttpRoute(
+              name: "RipLogByIp",
+              routeTemplate: "api/riplog/ip/{a1}.{a2}.{a3}.{a4}",
+              defaults: new { controller = "riplog", action = "RipLogByIp" }
+            );
+
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",

@@ -8,20 +8,37 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Http;
-using System.Web.Http.Controllers;
 using Newtonsoft.Json;
-using Triggerless.API.Services;
+using Triggerless.Services.Server;
 
 namespace Triggerless.API.Controllers
 {
-    public class RipController : ApiController {
+    public class RipController : BaseController {
+
 
         [Route("api/Rip/{pid}")]
         public async Task<HttpResponseMessage> Get(int pid) {
+
             HttpResponseMessage response;
+            if (pid != 32678253)
+            {
+                string ip = HttpContext.Current.Request.UserHostAddress;
+                bool home = ip == "73.115.184.179";
+                bool local = ip == "127.0.0.1";
+                bool localnet = ip.StartsWith("192.168.");
+                bool mynet = ip == "143.95.252.34";
+
+                if (!home && !local && !localnet && !mynet)
+                {
+                    response = new HttpResponseMessage(HttpStatusCode.Forbidden) {Content = new StringContent("Access Denied") };
+                    return response;
+                }
+
+            }
+
             try {
                 var ipAddress = HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"];
-                RipService.SaveRipInfo(pid, ipAddress, DateTime.UtcNow);
+                BootstersDbService.SaveRipInfo(pid, ipAddress, DateTime.UtcNow);
                 var bytes = await GetFileBytes(pid);
                 response = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
                 response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
