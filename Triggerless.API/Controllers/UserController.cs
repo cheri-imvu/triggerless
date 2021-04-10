@@ -20,7 +20,7 @@ namespace Triggerless.API.Controllers
         public async Task<HttpResponseMessage> Get(long id)
         {
             var user = await GetUser(id);
-            return GetResponseFromObject(user);
+            return GetJsonResponseFromObject(user);
         }
 
         public async Task<ImvuUser> GetUser(long id)
@@ -36,7 +36,7 @@ namespace Triggerless.API.Controllers
         {
             var client = new ImvuApiClient();
             var user = await client.GetUserByName(userName);
-            return GetResponseFromObject(user);
+            return GetJsonResponseFromObject(user);
         }
     }
 }

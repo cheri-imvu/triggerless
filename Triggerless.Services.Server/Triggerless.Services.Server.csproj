@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;USE_LOCAL</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -54,7 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BootstersDbConnection.cs" />
-    <Compile Include="BootstersDbService.cs" />
+    <Compile Include="BootstersDbClient.cs" />
     <Compile Include="ImvuApiClient.cs" />
     <Compile Include="ImvuApiService.cs" />
     <Compile Include="ImvuPageClient.cs" />

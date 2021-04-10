@@ -64,7 +64,7 @@ namespace Triggerless.Services.Server
                 // product is hidden in the catalog
                 // so we have to deep dive for this
 
-                if (exc.Message.Contains("403"))
+                if (exc.Message.Contains("403") || exc.Message.Contains("401"))
                 {
                     using (var pageClient = new ImvuPageClient())
                     {
@@ -74,6 +74,8 @@ namespace Triggerless.Services.Server
                             if (hiddenProduct.CreatorName != null && hiddenProduct.CreatorId != 0 && hiddenProduct.ProductImage != null)
                             {
                                 result = hiddenProduct;
+                                result.Status = "hidden";
+                                result.Message = "Partial data collected by web scrape";
                             } else
                             {
                                 failure.Message = "Crappy Product Data";
@@ -124,7 +126,7 @@ namespace Triggerless.Services.Server
             return result;
         }
 
-        public async Task<ImvuProductList> GetProducts(long[] p)
+        public async Task<ImvuProductList> GetProducts(IEnumerable<long> p)
         {
             var result = new ImvuProductList();
             // the "dumb" way

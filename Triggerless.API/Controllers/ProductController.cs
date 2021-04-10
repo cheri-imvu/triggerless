@@ -15,7 +15,7 @@ namespace Triggerless.API.Controllers
         [Route("api/product/{productId}")]
         public async Task<HttpResponseMessage> Get(long productId)
         {
-            return GetResponseFromObject(await GetProduct(productId));
+            return GetJsonResponseFromObject(await GetProduct(productId));
         }
         public async Task<ImvuProduct> GetProduct(long productId) {
             using (var client = new ImvuApiClient())
@@ -28,7 +28,7 @@ namespace Triggerless.API.Controllers
         [HttpGet, Route("api/products")]
         public async Task<HttpResponseMessage> Products([FromUri] long[] p)
         {
-            return GetResponseFromObject(await GetProducts(p));
+            return GetJsonResponseFromObject(await GetProducts(p));
         }
         public async Task<ImvuProductList> GetProducts(long[] p)
         {

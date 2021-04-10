@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Triggerless.Models;
+using System.Linq;
 
 namespace Triggerless.Services.Server
 {
-    public class BootstersDbService
+    public class BootstersDbClient
     {
         public static async Task<TriggerlessPostResponse> PostSong(TriggerlessRadioSong post)
         {
@@ -81,7 +82,7 @@ namespace Triggerless.Services.Server
             }
         }
 
-        public static async Task<IEnumerable<RipCountEntry>> IpAddresses ()
+        public static async Task<IEnumerable<RipCountEntry>> RipLogSummary ()
         {
             var result = new List<RipCountEntry>();
             using (var cxn = await BootstersDbConnection.Get())
@@ -97,7 +98,9 @@ namespace Triggerless.Services.Server
                         result.Add(new RipCountEntry
                         {
                             IpAddress = reader.GetString(0),
-                            Count = reader.GetInt32(1)
+                            Count = reader.GetInt32(1),
+                            URI = $"https://triggerless.com/api/riplog/ip/{reader.GetString(0)}/",
+                            URIWithProduct = $"https://triggerless.com/api/riplog/ipext/{reader.GetString(0)}/"
                         });
                     }
                 }
@@ -105,7 +108,7 @@ namespace Triggerless.Services.Server
             return result;
         }
 
-        public static async Task<IEnumerable<RipEntry>> LogEntriesByIp(string ipAddress)
+        public static async Task<IEnumerable<RipEntry>> RipLogEntriesByIp(string ipAddress)
         {
             using (var cxn = await BootstersDbConnection.Get())
             {
@@ -122,11 +125,62 @@ namespace Triggerless.Services.Server
                         result.Add(new RipEntry
                         {
                             IpAddress = reader.GetString(0),
-                            Date = reader.GetDateTime(1),
+                            UtcDate = reader.GetDateTime(1),
                             ProductId = reader.GetInt64(2),
                             Id = reader.GetInt64(3)
                         });
                     }
+                }
+                return result;
+            }
+        }
+
+        public static async Task<IEnumerable<RipEntryExt>> RipLogEntriesByIpExt(string ipAddress)
+        {
+            
+            using (var cxn = await BootstersDbConnection.Get())
+            {
+                var sql =
+                    $"select ipAddress, date, productId, id FROM [rip_log] where ipAddress = '{ipAddress}' order by date desc";
+                var cmd = cxn.CreateCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = sql;
+                var result = new List<RipEntryExt>();
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        result.Add(new RipEntryExt
+                        {
+                            IpAddress = reader.GetString(0),
+                            UtcDate = reader.GetDateTime(1),
+                            ProductId = reader.GetInt64(2),
+                            Id = reader.GetInt64(3)
+                        });
+                    }
+                }
+
+                using (var client = new ImvuApiClient())
+                {
+                    var productList = await client.GetProducts(result.Select(e => e.ProductId).Distinct());
+                    foreach (var product in productList.Products)
+                    {
+                        var entries = result.Where(e => e.ProductId == product.Id);
+                        foreach (var entry in entries)
+                        {
+                            entry.CreatorName = product.CreatorName;
+                            entry.CreatorId = product.CreatorId;
+                            entry.IsPurchaseable = product.IsPurchasable;
+                            entry.IsVisible = product.IsVisible;
+                            entry.ProductImage = product.ProductImage;
+                            entry.ProductName = product.Name;
+                            entry.ProductPage = product.ProductPage;
+                            entry.Rating = product.Rating;
+                            entry.RetailPrice = product.Price;
+                            entry.Message = product.Message;
+                        }
+                    }
+
                 }
                 return result;
             }

@@ -13,16 +13,16 @@ namespace Triggerless.API.Controllers
         [Route("api/radio/hours/{hours}"), HttpGet]
         public async Task<HttpResponseMessage> Get(double hours)
         {
-            var response = await BootstersDbService.GetSongs(hours);
-            return GetResponseFromObject(response);
+            var response = await BootstersDbClient.GetSongs(hours);
+            return GetJsonResponseFromObject(response);
         }
 
         [Route("api/radio/post"), HttpPost]
 
         public async Task<HttpResponseMessage> Post(TriggerlessRadioSong post)
         {
-            var response = await BootstersDbService.PostSong(post);
-            return GetResponseFromObject(response);
+            var response = await BootstersDbClient.PostSong(post);
+            return GetJsonResponseFromObject(response);
 
         }
 
@@ -32,8 +32,8 @@ namespace Triggerless.API.Controllers
         [Route("api/radio/tune/{title}"), HttpGet]
         public async Task<HttpResponseMessage> Tune(string title)
         {
-            var response = await BootstersDbService.PostSong(new TriggerlessRadioSong { title = title });
-            return GetResponseFromObject(response);
+            var response = await BootstersDbClient.PostSong(new TriggerlessRadioSong { title = title });
+            return GetJsonResponseFromObject(response);
         }
     }
 }

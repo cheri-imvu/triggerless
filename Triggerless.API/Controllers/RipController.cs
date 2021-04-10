@@ -20,13 +20,13 @@ namespace Triggerless.API.Controllers
         public async Task<HttpResponseMessage> Get(int pid) {
 
             HttpResponseMessage response;
+            string ipAddress = HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"];
             if (pid != 32678253)
             {
-                string ip = HttpContext.Current.Request.UserHostAddress;
-                bool home = ip == "73.115.184.179";
-                bool local = ip == "127.0.0.1";
-                bool localnet = ip.StartsWith("192.168.");
-                bool mynet = ip == "143.95.252.34";
+                bool home = ipAddress == "73.115.184.179";
+                bool local = ipAddress == "127.0.0.1";
+                bool localnet = ipAddress.StartsWith("192.168.");
+                bool mynet = ipAddress == "143.95.252.34";
 
                 if (!home && !local && !localnet && !mynet)
                 {
@@ -37,8 +37,7 @@ namespace Triggerless.API.Controllers
             }
 
             try {
-                var ipAddress = HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"];
-                BootstersDbService.SaveRipInfo(pid, ipAddress, DateTime.UtcNow);
+                BootstersDbClient.SaveRipInfo(pid, ipAddress, DateTime.UtcNow);
                 var bytes = await GetFileBytes(pid);
                 response = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
                 response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");

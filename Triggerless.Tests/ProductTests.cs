@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Triggerless.API.Controllers;
 using Triggerless.Models;
-using Triggerless.API.Services;
 
 namespace Triggerless.Tests
 {

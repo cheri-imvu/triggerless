@@ -15,7 +15,7 @@ namespace Triggerless.Tests
         [Test]
         public async Task GetSongsTest()
         {
-            var songs = await BootstersDbService.GetSongs(24);
+            var songs = await BootstersDbClient.GetSongs(24);
             Assert.That(songs.titles.Length > 0);
             songs.titles.ToList().ForEach(title => Console.WriteLine(title));
         }
@@ -24,10 +24,10 @@ namespace Triggerless.Tests
         public async Task PostSongTest()
         {
             var post = new TriggerlessRadioSong { title = "Roxy Music - Love is the Drug" };
-            var response = await BootstersDbService.PostSong(post);
+            var response = await BootstersDbClient.PostSong(post);
             Assert.That(response.status.StartsWith("success"));
             Console.WriteLine(response.status);
-            response = await BootstersDbService.PostSong(post);
+            response = await BootstersDbClient.PostSong(post);
             Assert.That(response.status.StartsWith("success"));
             Console.WriteLine(response.status);
         }

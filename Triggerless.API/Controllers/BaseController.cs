@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Web;
 using System.Web.Http;
@@ -12,7 +13,7 @@ namespace Triggerless.API.Controllers
 {
     public class BaseController: ApiController
     {
-        protected HttpResponseMessage GetResponse(string json)
+        protected HttpResponseMessage GetJsonResponse(string json)
         {
             var response = Request.CreateResponse(HttpStatusCode.OK);
             response.Headers.Add("Access-Control-Allow-Origin", "*");
@@ -20,9 +21,20 @@ namespace Triggerless.API.Controllers
             return response;
         }
 
-        protected HttpResponseMessage GetResponseFromObject(object thing)
+        protected HttpResponseMessage GetJsonResponseFromObject(object thing)
         {
-            return GetResponse(JsonConvert.SerializeObject(thing));
+            return GetJsonResponse(JsonConvert.SerializeObject(thing));
+        }
+
+        protected HttpResponseMessage GetBinaryResponse(byte[] bytes, string filename, string mediaType = "application/octet-stream")
+        {
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            response.Headers.Add("Access-Control-Allow-Origin", "*");
+            response.Content = new ByteArrayContent(bytes);
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
+            response.Content.Headers.ContentDisposition =
+                ContentDispositionHeaderValue.Parse($"attachment; filename = \"{filename}\"");
+            return response;
         }
 
     }
