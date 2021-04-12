@@ -104,9 +104,15 @@ namespace Triggerless.Services.Server
         public async Task<ImvuUser> GetUserByName(string userName)
         {
             var relUri = $"/users/avatarname/{userName}";
-            JObject j = await _service.GetJObject(relUri);
-            var result = j["denormalized"].First.ElementAt(0)["data"].ToObject<ImvuUser>();
-            return result;
+            try
+            {
+                JObject j = await _service.GetJObject(relUri);
+                var result = j["denormalized"].First.ElementAt(0)["data"].ToObject<ImvuUser>();
+                return result;
+            } catch (Exception exc)
+            {
+                return new ImvuUser { Id = -1, Message = exc.Message };
+            }
         }
 
         public async Task<ImvuUser> GetUser(long userId)
@@ -196,6 +202,27 @@ namespace Triggerless.Services.Server
             return result;
             */
 
+        }
+
+        public async Task<string> GetAvatarCardJson(string idOrName)
+        {
+            long id;
+            if (!long.TryParse(idOrName, out id))
+            {
+                var user = await GetUserByName(idOrName);
+
+                id = user.Id;
+                if (id < 1)
+                {
+                    return $"\"status\": \"failed\", \"message\": \"(404) No user named {idOrName} was found\"";
+                }
+            }
+
+            using (var pageClient = new ImvuPageClient())
+            {
+                var json = await pageClient.GetAvatarCardJson(id);
+                return json;
+            }
         }
 
         public void Dispose()

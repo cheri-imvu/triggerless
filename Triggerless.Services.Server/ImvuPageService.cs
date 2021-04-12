@@ -14,9 +14,8 @@ namespace Triggerless.Services.Server
         {
             _baseAddress = "https://www.imvu.com";
             var cookies = new CookieContainer();
-            var osCsid = Settings.Default.osCsid;
             _handler = new HttpClientHandler { CookieContainer = cookies };
-            cookies.Add(new Cookie("osCsid", osCsid, "/", ".imvu.com"));
+            cookies.Add(new Cookie("osCsid", OsCsid, "/", ".imvu.com"));
             _client = new HttpClient(_handler) { BaseAddress = new Uri(_baseAddress) };
 
         }

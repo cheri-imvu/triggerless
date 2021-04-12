@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,24 @@ namespace Triggerless.Services.Server
         public ImvuPageClient()
         {
             _service = new ImvuPageService();
+        }
+
+        public async Task<string> GetAvatarCardJson(long id)
+        {
+            try {
+                var json = await _service.GetJsonString($"http://www.imvu.com/api/avatarcard.php?cid={id}");
+                var jobject = JObject.Parse(json);
+                if (jobject == null) return $"\"status\": \"failure\", \"message\": \"Malformed JSON returned from IMVU\"";
+                if (jobject["error"] != null && jobject["error"].Value<string>() != null)
+                {
+                    return $"\"status\": \"failure\", \"message\": \"No Avatar information for CID {id}\"";
+                }
+                return json;
+            } 
+            catch (Exception exc)
+            {
+                return $"{{\"status\": failure, \"message\": \"{exc.Message}\"}}";
+            }
         }
 
         public async Task<ImvuProduct> GetHiddenProduct(long productId)

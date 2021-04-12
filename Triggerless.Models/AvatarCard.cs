@@ -46,6 +46,10 @@ namespace Triggerless.Models
         public bool? IsCreator { get; set; }
         public List<PublicRoom> PublicRooms { get; set; }
         public int VisibleAlbums { get; set; }
+        public int? ShowMarriage { get; set; }
+        public long? MarriedToPartnerCid { get; set; }
+        public string MarriedToPartnerAvName { get; set; }
+        public string MarriedToPartnerUrl { get; set; }
         public int? ImvuLevel { get; set; }
         public int? WallpaperId { get; set; }
         public string Status { get; set; }
@@ -132,6 +136,10 @@ namespace Triggerless.Models
 
                 //additional properties
                 result.IsCreator = jObject["is_creator"]?.Value<bool>();
+                result.ShowMarriage = jObject["show_marriage"]?.Value<int>();
+                result.MarriedToPartnerCid = jObject["married_to_partner_cid"]?.Value<long>();
+                result.MarriedToPartnerAvName = jObject["married_to_partner_avname"]?.Value<string>();
+                result.MarriedToPartnerUrl = jObject["married_to_partner_url"]?.Value<string>();
                 result.ImvuLevel = jObject["imvu_level"]?.Value<int>();
                 result.WallpaperId = jObject["wallpaper_id"].Value<int>();
 

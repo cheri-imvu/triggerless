@@ -4,6 +4,7 @@ using System.Data;
 using System.Threading.Tasks;
 using Triggerless.Models;
 using System.Linq;
+using System.Collections.Concurrent;
 
 namespace Triggerless.Services.Server
 {
@@ -100,7 +101,7 @@ namespace Triggerless.Services.Server
                             IpAddress = reader.GetString(0),
                             Count = reader.GetInt32(1),
                             URI = $"https://triggerless.com/api/riplog/ip/{reader.GetString(0)}/",
-                            URIWithProduct = $"https://triggerless.com/api/riplog/ipext/{reader.GetString(0)}/"
+                            URIWithProduct = $"https://triggerless.com/api/riplog/ipx/{reader.GetString(0)}/"
                         });
                     }
                 }
@@ -135,7 +136,40 @@ namespace Triggerless.Services.Server
             }
         }
 
-        public static async Task<IEnumerable<RipEntryExt>> RipLogEntriesByIpExt(string ipAddress)
+        public static async Task<IEnumerable<RipEntry>> RipLogEntriesByUtcDate(string dateString, int hours = 24)
+        {
+            if (!DateTime.TryParse(dateString, out var startDate)) return new List<RipEntry>();
+
+            using (var cxn = await BootstersDbConnection.Get())
+            {
+                var sqlDate = startDate.ToString("yyyy-MM-dd HH:mm:ss");
+
+                var sql =
+                    $"select ipAddress, date, productId, id FROM [rip_log] where date between '{sqlDate}' and DATEADD(hour, {hours}, '{sqlDate}') order by date asc";
+                var cmd = cxn.CreateCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = sql;
+                var result = new ConcurrentBag<RipEntry>();
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        result.Add(new RipEntry
+                        {
+                            IpAddress = reader.GetString(0),
+                            UtcDate = reader.GetDateTime(1),
+                            ProductId = reader.GetInt64(2),
+                            Id = reader.GetInt64(3)
+                        });
+                    }
+                }
+
+                return result.Reverse();
+            }
+        }
+
+
+            public static async Task<IEnumerable<RipEntryExt>> RipLogEntriesByIpExt(string ipAddress)
         {
             
             using (var cxn = await BootstersDbConnection.Get())

@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,6 +66,70 @@ namespace Triggerless.Tests
             Assert.IsNotNull(product.CreatorName);
             Assert.IsNotNull(product.ProductImage);
             Assert.That(product.CreatorId > 0);
+        }
+
+        [Test]
+        public async Task GetAvatarCardById()
+        {
+            var json = await _client.GetAvatarCardJson($"25522141");
+            Assert.IsNotNull(json);
+            Assert.IsNotNull(JObject.Parse(json));
+            Console.WriteLine(json);
+        }
+
+        [Test]
+        public async Task GetAvatarCardByName()
+        {
+            var json = await _client.GetAvatarCardJson($"DJSher");
+            Assert.IsNotNull(json);
+            Assert.IsNotNull(JObject.Parse(json));
+            Console.WriteLine(json);
+        }
+
+        [Test]
+        public async Task GetAvatarCardBadId()
+        {
+            var json = await _client.GetAvatarCardJson($"255221410000");
+            Assert.IsNotNull(json);
+            Assert.IsNotNull(JObject.Parse(json));
+            object o = JsonConvert.DeserializeObject(json);
+
+            Assert.That(condition: o.GetType()
+                .GetProperties()
+                .Any(prop => prop.Name == "error"));
+
+            Assert.That(condition: o.GetType()
+                .GetProperties()
+                .Where(prop => prop.Name == "error")
+                .First()
+                .GetValue(o)
+                .ToString() == "No avatar was specified.");
+
+            Console.WriteLine(json);
+
+        }
+
+        [Test]
+        public async Task GetAvatarCardBadName()
+        {
+            var json = await _client.GetAvatarCardJson($"xxPresidentHillaryClintonxx");
+            Assert.IsNotNull(json);
+            Assert.IsNotNull(JObject.Parse(json));
+            object o = JsonConvert.DeserializeObject(json);
+
+            Assert.That(condition: o.GetType()
+                .GetProperties()
+                .Any(prop => prop.Name == "error"));
+
+            Assert.That(condition: o.GetType()
+                .GetProperties()
+                .Where(prop => prop.Name == "error")
+                .First()
+                .GetValue(o)
+                .ToString() == "No avatar was specified.");
+
+            Console.WriteLine(json);
+
         }
     }
 }

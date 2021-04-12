@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web.Http;
 using Triggerless.Services.Server;
+using System.Linq;
 
 namespace Triggerless.API.Controllers
 {
@@ -27,10 +28,12 @@ namespace Triggerless.API.Controllers
             return GetJsonResponseFromObject(await BootstersDbClient.RipLogEntriesByIpExt(ip));
         }
 
-        [HttpGet, Route("api/riplog/test/{entry}")]
-        public async Task<HttpResponseMessage> Test (string entry)
+        [HttpGet, Route("api/riplog/date/{dateString}/{hours}"), Route("api/riplog/date/{dateString}")]
+        public async Task<HttpResponseMessage> RipLogByDate (string dateString, int? hours = 24)
         {
-            return GetJsonResponseFromObject(new { Message = $"You entered {entry}" });
+            var entries = await BootstersDbClient.RipLogEntriesByUtcDate(dateString, hours.Value);
+            if (entries == null || !entries.Any()) return GetJsonResponseFromObject(new { Message = $"Invalid date string or no data available" });
+            return GetJsonResponseFromObject(entries);
         }
     }
 }
