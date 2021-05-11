@@ -225,6 +225,28 @@ namespace Triggerless.Services.Server
             }
         }
 
+        public async Task<string> GetConversationsJson()
+        {
+            long cid = 25522141;
+            var relUri = $"/user/user-{cid}/conversations";
+            try
+            {
+                var result = await _service.GetJsonString(relUri);
+                return result;
+            }
+            catch (Exception exc)
+            {
+                return $"{{\"status\":\"failed\", \"message\":\"{exc.Message}\"}}";
+            }
+
+        }
+
+        public async Task<ConvoResponse> ConversationResponse()
+        {
+            return ConvoResponse.FromJson(await GetConversationsJson());
+        }
+
+
         public void Dispose()
         {
             _service?.Dispose();

@@ -131,5 +131,22 @@ namespace Triggerless.Tests
             Console.WriteLine(json);
 
         }
+
+        [Test]
+        public async Task GetConversationJson()
+        {
+            var json = await _client.GetConversationsJson();
+            Console.WriteLine(json);
+        }
+
+        [Test]
+        public async Task GetConvoResponse()
+        {
+            var resp = await _client.ConversationResponse();
+            Assert.IsTrue(resp != null);
+            Assert.That(resp.Conversations.Count > 10);
+            Console.WriteLine($"{resp.Conversations.Count} conversations");
+
+        }
     }
 }

@@ -25,7 +25,7 @@ namespace Triggerless.Services.Server {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ABCDEFGHIJKLMNOPQRTSTUVWX")]
+        [global::System.Configuration.DefaultSettingValueAttribute("abcdefghijklmnopqrstuvwxya123456")]
         public string osCsid {
             get {
                 return ((string)(this["osCsid"]));

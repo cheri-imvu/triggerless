@@ -22,6 +22,6 @@ namespace Triggerless.Services.Server
 
         }
 
-        public static string OsCsid => Settings.Default.osCsid;
+        public static string OsCsid => ConfigurationManager.AppSettings["osCsid"] ?? Settings.Default.osCsid;
     }
 }
