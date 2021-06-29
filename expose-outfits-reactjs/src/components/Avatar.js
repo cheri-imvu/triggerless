@@ -5,6 +5,7 @@ const Avatar = (props) => {
     let name = props.avatar.avatarname;
     let photo = props.avatar.photo;
     let products = props.avatar.products;
+    let apHidden = props.apHidden;
 
     return (
         <div className="av-ctr">
@@ -16,7 +17,7 @@ const Avatar = (props) => {
                     </a>
                 </div>
                 {products.map((prod) => (
-                    <Product key={prod.product_id} product={prod} />
+                    <Product key={prod.product_id} product={prod} apHidden={apHidden} />
                 ))}
 
             </div>

@@ -1,37 +1,34 @@
 import Avatar from "./Avatar"
+import Room from "./Room"
 import { useState } from 'react'
 import './Outfits.css'
 
 const Outfits = () => {
 
-    const [state, setState] = useState({avatars: [], room: [], apHidden: false})
-
-    const getApHidden = () => {
-        let apHidden = document.getElementById("apHidden");
-        return apHidden.checked
-    }
+    const [state, setState] = useState({avatars: [], room: []})
 
     const clearLink = () => {
         document.getElementById("webLink").value = '';
-        setState({apHidden: state.apHidden, avatars: [], room: []});
-        console.log(state)
+        setState({avatars: [], room: []});
     }
 
     const processLink = () => {
         let webLink = document.getElementById("webLink").value
         let linkData = getLinkData(webLink);
-        let newState = {avatars: [], room: state.room, apHidden: getApHidden()};
-        if (linkData.avatars == null) {
-            setState(newState);
+        let newState = {avatars: [], room: []};
+        
+        if (linkData.avatars == null || linkData.avatars.length === 0) {
+            setState({...newState});
             return;
         }
-        let server = 'https://triggerless.com/api';  //hosted
-        //let server = 'http://localhost:61120/api';  // development
+        setState(newState);
+        console.log(state);
+        //let server = 'https://triggerless.com/api';  //hosted
+        let server = 'http://localhost:61120/api';  // development
 
+        // Loop through avatars and get all their products
 
-
-        linkData.avatars.forEach(avi => {
-
+        const getAvis = (server, linkData) => linkData.avatars.forEach(avi => {
             fetch(`${server}/user/${avi.id}`)
             .then(res => res.json())
             .then(data => {
@@ -40,15 +37,35 @@ const Outfits = () => {
                 fetch(`${server}/products?${queryString}`)
                 .then(res => res.json())
                 .then(data => {
-                    currentUser.products = data.Products.filter(p => p.product_name != null) // remove products hidden in catalog
-                    newState = {avatars: [...newState.avatars, currentUser], room: state.room, apHidden: getApHidden()}
-                    console.log(newState);
+                    currentUser.products = data.Products.filter(p => p.product_name != null)
+                    console.log(currentUser);
+                    newState = {...state, avatars: [...state.avatars, currentUser]}
                     setState(newState);
+                    console.log('newState', newState);
                 });
             })
+        });       
+        getAvis(server, linkData); 
+
+        // Get the room products first
+        const getRoom = (server, linkData) => {
+            let qs = 'p=' + linkData.room.join('&p=');
+            fetch(`${server}/products?${qs}`)
+                .then(res => res.json())
+                .then(data => {
+                    let roomProds = data.Products.filter(p => p.product_name != null)
+                    newState = {...state, room: roomProds}
+                    setState(newState);
+                    //console.log(state);
+                }
+            );
+        }
+
+        const promise = new Promise((resolve, reject) => {
+
         });
-        
-        
+
+
     }
 
     return (
@@ -58,7 +75,6 @@ const Outfits = () => {
             <li>In IMVU Client, right-click anywhere in the room, and select "View products in this scene".</li>
             <li>Your browser should pop up with a page. Usually, many of the outfits will be hidden.</li>
             <li>Go to the Address Bar near the top, and select the entire web link. Copy it to the clipboard.</li>
-            <li>If you want to view only AP items, Voice Boxes and Hidden Products, tick the check box.</li>
             <li>Paste the web link into the text box below. Click "Expose" button. After a brief wait, the outfits will be exposed.</li>
         </ol>
         <table>
@@ -67,10 +83,6 @@ const Outfits = () => {
                 <td>
                 <div style={{paddingLeft: "25px"}}>
                     <textarea id="webLink" style={{width: "500px", height: "200px"}} placeholder="Paste web link here"></textarea>
-                </div>
-                <div style={{paddingLeft: "25px"}}>
-                    <input type="checkbox" id="apHidden" onChange={processLink} />
-                    <label for="apHidden">AP, VBs &amp; Hidden Only</label>
                 </div>
                 </td>
                 <td>
@@ -85,8 +97,9 @@ const Outfits = () => {
         </table>
         <div>
             {state.avatars.map((avi) => (
-                <Avatar key={avi.id} avatar={avi} apHidden={state.apHidden} />
+                <Avatar key={avi.id} avatar={avi} />
             ))}
+            <Room products={state.room} />
         </div>
         </>
     )

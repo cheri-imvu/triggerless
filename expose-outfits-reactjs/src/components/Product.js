@@ -2,6 +2,7 @@ import './Product.css'
 
 const Product = (props) => {
 
+    let apHidden = props.apHidden;
     let productId = props.product.product_id;
     let productName = props.product.product_name;
     let creatorId = props.product.creator_cid;
@@ -17,7 +18,7 @@ const Product = (props) => {
         creatorName = cnSplits[0] + ' [deleted]';
     }
 
-    return (
+    let jsx = (
         <div className='product-ctr'>
             <div>
                 <a rel="noreferrer" target="_blank" href={prodUrl}>
@@ -25,11 +26,18 @@ const Product = (props) => {
                     <a rel="noreferrer" target="_blank" href={`https://www.imvu.com/shop/web_search.php?manufacturers_id=${creatorId}`}>
                         {creatorName}</a>
                     &nbsp;({!isVisible ? 'Hidden' : rating})</div>
-            <div className="product-img"><a rel="noreferrer" target="_blank" href={prodUrl}>
+            <div className="product-img">
+                <a rel="noreferrer" target="_blank" href={prodUrl}>
                 <img src={productImage} alt={productName + " by " + creatorName} />
-                </a></div>
+                </a>
+            </div>
         </div>
     )
+
+    if (!apHidden) return jsx
+    let rxVB = /vb|voice|loud|scream|noise|sound/ig
+    if (rating === "AP" || !isVisible || rxVB.test(productName)) return jsx
+    return (<></>)
 }
 
 export default Product

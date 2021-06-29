@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -23,7 +24,7 @@ namespace Triggerless.API.Controllers
             string ipAddress = HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"];
             if (pid != 32678253)
             {
-                bool home = ipAddress == "73.115.184.179";
+                bool home = ipAddress == (ConfigurationManager.AppSettings["homeIP"] ?? "98.201.77.24");
                 bool local = ipAddress == "127.0.0.1";
                 bool localnet = ipAddress.StartsWith("192.168.");
                 bool mynet = ipAddress == "143.95.252.34";
