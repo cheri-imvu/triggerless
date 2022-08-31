@@ -5,40 +5,91 @@ using System.IO.Compression;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Http;
 using Newtonsoft.Json;
+using Triggerless.Models;
 using Triggerless.Services.Server;
 
 namespace Triggerless.API.Controllers
 {
     public class RipController : BaseController {
 
+        public virtual string AllowedIPs
+        {
+            get
+            {
+                return (ConfigurationManager.AppSettings["allowedIPs"]);
+            }
+        }
+
+        public virtual string RemoteIP
+        {
+            get
+            {
+                return HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"];
+            }
+        }
+
+        public virtual bool RestrictIPs
+        {
+            get
+            {
+                string restricted = ConfigurationManager.AppSettings["restrictIPs"];
+                if (restricted?.ToLower() == "false" || restricted?.ToLower() == "no") return false;
+                return true;
+            }
+        }
 
         [Route("api/Rip/{pid}")]
         public async Task<HttpResponseMessage> Get(int pid) {
 
             HttpResponseMessage response;
-            string ipAddress = HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"];
-            if (pid != 32678253)
-            {
-                bool home = ipAddress == (ConfigurationManager.AppSettings["homeIP"] ?? "98.201.77.24");
-                bool local = ipAddress == "127.0.0.1";
-                bool localnet = ipAddress.StartsWith("192.168.");
-                bool mynet = ipAddress == "143.95.252.34";
+            string ipAddress = RemoteIP;
 
-                if (!home && !local && !localnet && !mynet)
+            if (RestrictIPs)
+            {
+
+                var ipAddresses = AllowedIPs.Split(';');
+                bool allowed = false;
+
+                foreach (var ip in ipAddresses)
                 {
-                    response = new HttpResponseMessage(HttpStatusCode.Forbidden) {Content = new StringContent("Access Denied") };
-                    return response;
+                    if (ip.EndsWith("*"))
+                    {
+                        allowed |= ipAddress.StartsWith(ip.Replace("*", ""));
+                    }
+                    else
+                    {
+                        allowed |= ipAddress == ip;
+                    }
+
                 }
 
+                allowed |= ipAddress == "127.0.0.1" || ipAddress == "::1";
+                allowed |= ipAddress.StartsWith("192.168.");
+
+
+                if (!allowed)
+                {
+                    var sb = new StringBuilder();
+                    foreach (var ip in ipAddresses)
+                    {
+                        //sb.AppendLine($"Allowed: '{ip}'");
+                    }
+                    sb.AppendLine($"Access Denied to '{ipAddress}'");
+
+
+                    response = new HttpResponseMessage(HttpStatusCode.Forbidden) { Content = new StringContent(sb.ToString()) };
+                    return response;
+                }
             }
 
             try {
-                BootstersDbClient.SaveRipInfo(pid, ipAddress, DateTime.UtcNow);
+                new BootstersDbClient().SaveRipInfo(pid, ipAddress, DateTime.UtcNow);
                 var bytes = await GetFileBytes(pid);
                 response = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
                 response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
@@ -47,10 +98,16 @@ namespace Triggerless.API.Controllers
                 return response;
 
             } catch (FileNotFoundException) {
-                response = new HttpResponseMessage(HttpStatusCode.NotFound);
+                response = new HttpResponseMessage(HttpStatusCode.NotFound) { 
+                    Content = new StringContent("404 The file wasn't found on the server.")
+                };
                 return response;
-            } catch (Exception) {
-                response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+            } catch (Exception exc) {
+                var msg = $"500 Internal Server Error\n{exc.Message}\nStack Trace\n{exc.StackTrace}";
+                response = new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    Content = new StringContent(msg)
+                };
                 return response;
             }
         }
@@ -63,7 +120,7 @@ namespace Triggerless.API.Controllers
             using (var client = new HttpClient())
             {
                 //client.Headers.Add(HttpRequestHeader.KeepAlive, "true");
-                var urlTemplate = $"http://userimages-akm.imvu.com/productdata/{pid}/1/{{0}}";
+                var urlTemplate = RipService.GetUrlTemplate(pid);
                 //client.Timeout = new TimeSpan(0, 1, 0);
 
                 var url = string.Format(urlTemplate, "_contents.json");
@@ -107,26 +164,7 @@ namespace Triggerless.API.Controllers
            }
         }
 
-        // ReSharper disable once ClassNeverInstantiated.Local
-        public class ProductList
-        {
-            // ReSharper disable once UnusedAutoPropertyAccessor.Local
-            public ProductItem[] productArray { get; set; }
-        }
-
-        // ReSharper disable once ClassNeverInstantiated.Local
-        public class ProductItem
-        {
-            // ReSharper disable UnusedAutoPropertyAccessor.Local
-            public string url { get; set; }
-            public string name { get; set; }
-            public string original_dimensions { get; set; }
-            public string[] tags { get; set; }
-            public byte[] content { get; set; }
-            public long length { get; set; }
-            // ReSharper restore UnusedAutoPropertyAccessor.Local
-        }
-
+        
 
     }
 }

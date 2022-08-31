@@ -17,6 +17,7 @@ namespace Triggerless.API.Controllers
         {
             return GetJsonResponseFromObject(await GetProduct(productId));
         }
+
         public async Task<ImvuProduct> GetProduct(long productId) {
             using (var client = new ImvuApiClient())
             {

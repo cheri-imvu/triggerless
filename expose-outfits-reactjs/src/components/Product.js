@@ -18,9 +18,11 @@ const Product = (props) => {
         creatorName = cnSplits[0] + ' [deleted]';
     }
 
+    let apButton = rating === 'AP' ? (<span class="ap">AP</span>) : (<></>)
     let jsx = (
         <div className='product-ctr'>
             <div>
+                {apButton}
                 <a rel="noreferrer" target="_blank" href={prodUrl}>
                     {productName}</a><br/>by&nbsp; 
                     <a rel="noreferrer" target="_blank" href={`https://www.imvu.com/shop/web_search.php?manufacturers_id=${creatorId}`}>

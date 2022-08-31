@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using log4net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
@@ -9,19 +10,21 @@ namespace Triggerless.API.Controllers
 {
     public class RadioController : BaseController
     {
+        public static readonly ILog _log = LogManager.GetLogger(nameof(RadioController));
+        private static BootstersDbClient _dbClient = new BootstersDbClient(_log);
 
-        [Route("api/radio/hours/{hours}"), HttpGet]
-        public async Task<HttpResponseMessage> Get(double hours)
+        [Route("api/radio/list/{djname}/{count}"), HttpGet]
+        public async Task<HttpResponseMessage> GetList(string djName, int count)
         {
-            var response = await BootstersDbClient.GetSongs(hours);
+            var response = await _dbClient.GetSongs(djName, count);
             return GetJsonResponseFromObject(response);
         }
 
         [Route("api/radio/post"), HttpPost]
 
-        public async Task<HttpResponseMessage> Post(TriggerlessRadioSong post)
+        public async Task<HttpResponseMessage> Post([FromBody]TriggerlessRadioSong post)
         {
-            var response = await BootstersDbClient.PostSong(post);
+            var response = await _dbClient.PostSong(post);
             return GetJsonResponseFromObject(response);
 
         }
@@ -29,10 +32,10 @@ namespace Triggerless.API.Controllers
         // Important to note: IIS7 URLs cannot have a plus (+) symbol in the route
         // So don't escape the title, and scrub title of any plusses if they're there.
 
-        [Route("api/radio/tune/{title}"), HttpGet]
-        public async Task<HttpResponseMessage> Tune(string title)
+        [Route("api/radio/tune/{djName}/{title}"), HttpGet]
+        public async Task<HttpResponseMessage> Tune(string djName, string title)
         {
-            var response = await BootstersDbClient.PostSong(new TriggerlessRadioSong { title = title });
+            var response = await _dbClient.PostSong(new TriggerlessRadioSong { djName = djName, title = title });
             return GetJsonResponseFromObject(response);
         }
     }

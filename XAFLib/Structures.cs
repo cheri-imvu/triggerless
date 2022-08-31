@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Triggerless.XAFLib
 {
@@ -22,6 +23,28 @@ namespace Triggerless.XAFLib
             _z = (float)z;
             _w = (float)w;
 
+        }
+
+        public Quaternion(string text)
+        {
+            string[] pieces = text.Split(new char[] { ' ', ',', ';', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            pieces = pieces.Select(p => p.Trim()).ToArray();
+            if (pieces.Length != 4)
+            {
+                throw new ArgumentException("Four separated numbers required in the input string");
+            }
+
+            try
+            {
+                var numbers = pieces.Select(p => Convert.ToSingle(p)).ToArray();
+                _x = numbers[0];
+                _y = numbers[1];
+                _z = numbers[2];
+                _w = numbers[3];
+            } catch (Exception)
+            {
+                throw new ArgumentException("Non numeric values passed into input string");
+            }
         }
 
         public static Quaternion Zero => new Quaternion(0,0,0,0);
@@ -99,6 +122,29 @@ namespace Triggerless.XAFLib
 
         public Vector(float x, float y, float z) {
             _x = x; _y = y; _z = z;
+        }
+
+        public Vector(string text)
+        {
+            string[] pieces = text.Split(new char[] { ' ', ',', ';', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            pieces = pieces.Select(p => p.Trim()).ToArray();
+            if (pieces.Length != 3)
+            {
+                throw new ArgumentException("Three separated numbers required in the input string");
+            }
+
+            try
+            {
+                var numbers = pieces.Select(p => Convert.ToSingle(p)).ToArray();
+                _x = numbers[0];
+                _y = numbers[1];
+                _z = numbers[2];
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Non numeric values passed into input string");
+            }
+
         }
 
         public float X {

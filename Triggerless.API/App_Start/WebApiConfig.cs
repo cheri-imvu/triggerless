@@ -37,6 +37,7 @@ namespace Triggerless.API
                 defaults: new { id = RouteParameter.Optional }
             );
 
+            
             config.EnableCors();
         }
     }

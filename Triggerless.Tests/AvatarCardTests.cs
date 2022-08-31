@@ -3,7 +3,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Triggerless.API.Controllers;
-
+using Triggerless.Models;
 using AvCard = Triggerless.Models.AvatarCard;
 
 namespace Triggerless.Tests
@@ -24,7 +24,7 @@ namespace Triggerless.Tests
             var json = $"{{productArray: {responseJson}}}";
 
 
-            var list = JsonConvert.DeserializeObject<RipController.ProductList>(json);
+            var list = JsonConvert.DeserializeObject<ProductList>(json);
             Console.WriteLine(list.productArray.Length);
 
         }

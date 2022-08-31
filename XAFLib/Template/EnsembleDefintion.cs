@@ -16,6 +16,7 @@ namespace Triggerless.XAFLib
         public EnsembleDefintion() {
             SkeletalAnimationEffects = new List<SkeletalAnimationEffect>();
             MorphAnimationEffects = new List<MorphAnimationEffect>();
+            EnsembleAttributes = new EnsembleAttributes();
         }
 
         public override void AddXml(XmlElement parent, int? index = null) {
@@ -66,11 +67,16 @@ namespace Triggerless.XAFLib
         public override void LoadXml(XmlNode node) {
 
             foreach (XmlElement el in node.ChildNodes) {
-
                 if (el.Name == nameof(EnsembleAttributes))
                 {
                     EnsembleAttributes = new EnsembleAttributes();
-                    EnsembleAttributes.LoadXml(el);
+                    try
+                    {
+                        EnsembleAttributes.LoadXml(el);
+                    } catch (Exception)
+                    {
+                        // skip it
+                    }
                 }
 
                 if (el.Name.StartsWith("SkeletalAnimationEffect"))

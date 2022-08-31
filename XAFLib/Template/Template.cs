@@ -13,8 +13,6 @@ namespace Triggerless.XAFLib
     }
 
     [Serializable]
-
-
     public class Template {
         public int ParentProductID { get; set; }
         public List<Action> Actions { get; }
@@ -27,18 +25,32 @@ namespace Triggerless.XAFLib
             if (!File.Exists(filename)) throw new FileNotFoundException();
             XmlDocument doc = new XmlDocument();
             doc.Load(filename);
+            return GetTemplate(doc);
+        }
+
+        public static Template LoadXml(string xml)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(xml);
+            return GetTemplate(doc);
+        }
+
+        private static Template GetTemplate(XmlDocument doc)
+        {
             XmlElement rootElement = doc.DocumentElement;
             if (rootElement == null || rootElement.Name != "Template") throw new XmlException("Invalid document");
             Template result = new Template();
 
-            result.ParentProductID = 
+            result.ParentProductID =
                 int.Parse(rootElement.ChildNodes[0].InnerText
-                .Replace("product://","")
-                .Replace("/index.xml",""));
+                .Replace("product://", "")
+                .Replace("/index.xml", ""));
 
-            for (int i = 1; i < rootElement.ChildNodes.Count; i++) {
+            for (int i = 1; i < rootElement.ChildNodes.Count; i++)
+            {
                 XmlNode aNode = rootElement.ChildNodes[i];
-                if (aNode.Name.StartsWith("Action")) {
+                if (aNode.Name.StartsWith("Action"))
+                {
                     Action a = new Action();
                     a.LoadXml(rootElement.ChildNodes[i]);
                     result.Actions.Add(a);

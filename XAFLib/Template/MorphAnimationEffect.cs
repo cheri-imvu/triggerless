@@ -41,8 +41,11 @@ namespace Triggerless.XAFLib
 
         public override void LoadXml(XmlNode node) {
             XmlElement an = node.SelectSingleNode("AssetName") as XmlElement;
-            AssetName = an.InnerText;
-            EffectControls.LoadXml(node.SelectSingleNode("EffectControls"));
+            if (an != null)
+            {
+                AssetName = an.InnerText;
+                EffectControls.LoadXml(node.SelectSingleNode("EffectControls"));
+            }
         }
     }
 

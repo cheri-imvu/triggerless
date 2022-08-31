@@ -14,6 +14,7 @@ namespace Triggerless.Models
 
     public class TriggerlessRadioSong
     {
+        public string djName { get; set; }
         public string title { get; set; }
     }
 

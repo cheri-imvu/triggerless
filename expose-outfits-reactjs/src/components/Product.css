@@ -11,3 +11,12 @@
 .product-img {
     text-align: center;
 }
+
+.ap {
+    background-color: #990000;
+    color: white;
+    padding: 2px;
+    font-weight: bold;
+    margin: 2px;
+    border-radius: 5px;
+}

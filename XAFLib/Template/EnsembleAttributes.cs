@@ -84,7 +84,7 @@ namespace Triggerless.XAFLib
         public override void LoadXml(XmlNode node)
         {
             XmlElement el = node.SelectSingleNode(nameof(ActionEnsembleTermination)) as XmlElement;
-            if (el != null)
+            if (el != null && !string.IsNullOrWhiteSpace(el.InnerText))
             {
                 ActionEnsembleTermination = (ActionEnsembleTermination)Enum.Parse(typeof(ActionEnsembleTermination), el.InnerText);
             }

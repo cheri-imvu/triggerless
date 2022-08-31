@@ -5,15 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Triggerless.Models;
+using log4net;
 
 namespace Triggerless.Services.Server
 {
     public class ImvuPageClient: IDisposable
     {
         private ImvuPageService _service;
+        private ILog _log;
 
-        public ImvuPageClient()
+        public ImvuPageClient(ILog log = null)
         {
+            _log = log;
             _service = new ImvuPageService();
         }
 

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using log4net;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -15,9 +16,11 @@ namespace Triggerless.Services.Server
     public class ImvuApiClient: IDisposable
     {
         private ImvuApiService _service;
+        private ILog _log;
 
-        public ImvuApiClient()
+        public ImvuApiClient(ILog log = null)
         {
+            _log = log;
             _service = new ImvuApiService();
         }
 
@@ -103,20 +106,24 @@ namespace Triggerless.Services.Server
 
         public async Task<ImvuUser> GetUserByName(string userName)
         {
+            _log?.Debug($"{nameof(ImvuApiClient)}.{nameof(GetUserByName)}({userName})");
             var relUri = $"/users/avatarname/{userName}";
             try
             {
                 JObject j = await _service.GetJObject(relUri);
                 var result = j["denormalized"].First.ElementAt(0)["data"].ToObject<ImvuUser>();
+                _log?.Debug($"Success - {nameof(ImvuApiClient)}.{nameof(GetUserByName)}({userName})");
                 return result;
             } catch (Exception exc)
             {
+                _log?.Error("ImvuUser JSON could not be retrieved.", exc);
                 return new ImvuUser { Id = -1, Message = exc.Message };
             }
         }
 
         public async Task<ImvuUser> GetUser(long userId)
         {
+            _log?.Debug($"{nameof(ImvuApiClient)}.{nameof(GetUser)}");
 #if USE_LOCAL
             return new ImvuUser { 
                 Id = userId,
@@ -124,18 +131,26 @@ namespace Triggerless.Services.Server
                 Photo = "https://triggerless.com/Content/avatar.png"
             };
 #endif
-#pragma warning disable CS0162 // Unreachable code detected
             var relUri = $"/users/{userId}";
-#pragma warning restore CS0162 // Unreachable code detected
-            JObject j = await _service.GetJObject(relUri);
-            var result = j["denormalized"].First.ElementAt(0)["data"].ToObject<ImvuUser>();
-            return result;
+            try
+            {
+                JObject j = await _service.GetJObject(relUri);
+                var result = j["denormalized"].First.ElementAt(0)["data"].ToObject<ImvuUser>();
+                _log?.Debug($"Success - {nameof(ImvuApiClient)}.{nameof(GetUser)}");
+                return result;
+            }
+            catch (Exception exc)
+            {
+                _log?.Error($"Unable to get User with ID ({userId})", exc);
+                return new ImvuUser { Id = userId, AvatarName = "unavailable", Error = exc.Message, Status = "failed"};
+            }
         }
 
         public async Task<ImvuProductList> GetProducts(IEnumerable<long> p)
         {
             var result = new ImvuProductList();
             // the "dumb" way
+            
 
             var list = new ConcurrentBag<ImvuProduct>();
             foreach (var productId in p)
@@ -144,7 +159,7 @@ namespace Triggerless.Services.Server
             }
             result.Products = list.ToArray();
             return result;
-
+            
 
 
 
@@ -200,12 +215,13 @@ namespace Triggerless.Services.Server
             result.Products = cache.Values.ToArray();
 
             return result;
+            
             */
-
         }
 
         public async Task<string> GetAvatarCardJson(string idOrName)
         {
+            _log?.Debug($"{nameof(ImvuApiClient)}.{nameof(GetAvatarCardJson)} begins");
             long id;
             if (!long.TryParse(idOrName, out id))
             {
@@ -214,11 +230,12 @@ namespace Triggerless.Services.Server
                 id = user.Id;
                 if (id < 1)
                 {
+                    _log?.Warn($"Avatar with name {idOrName} not found.");
                     return $"\"status\": \"failed\", \"message\": \"(404) No user named {idOrName} was found\"";
                 }
             }
 
-            using (var pageClient = new ImvuPageClient())
+            using (var pageClient = new ImvuPageClient(_log))
             {
                 var json = await pageClient.GetAvatarCardJson(id);
                 return json;

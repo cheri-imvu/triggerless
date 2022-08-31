@@ -26,6 +26,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.XAFLib", "XAFLi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.Notifier", "Triggerless.Notifier\Triggerless.Notifier.csproj", "{5F90D4C0-3C9E-43F2-9F63-7F6072CB7AD3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.AbandonedProductApp", "Triggerless.AbandonedProductApp\Triggerless.AbandonedProductApp.csproj", "{47A77278-3951-4F4F-8190-75C39F68AF2B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NVorbis", "NVorbis\NVorbis.csproj", "{0BEB1D6D-C0F5-48E0-A006-2EE25B6AEA62}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +72,14 @@ Global
 		{5F90D4C0-3C9E-43F2-9F63-7F6072CB7AD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F90D4C0-3C9E-43F2-9F63-7F6072CB7AD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F90D4C0-3C9E-43F2-9F63-7F6072CB7AD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47A77278-3951-4F4F-8190-75C39F68AF2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47A77278-3951-4F4F-8190-75C39F68AF2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47A77278-3951-4F4F-8190-75C39F68AF2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47A77278-3951-4F4F-8190-75C39F68AF2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BEB1D6D-C0F5-48E0-A006-2EE25B6AEA62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BEB1D6D-C0F5-48E0-A006-2EE25B6AEA62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BEB1D6D-C0F5-48E0-A006-2EE25B6AEA62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BEB1D6D-C0F5-48E0-A006-2EE25B6AEA62}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

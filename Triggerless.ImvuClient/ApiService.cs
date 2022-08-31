@@ -19,6 +19,19 @@ namespace Triggerless.Services.Common
 
         }
 
+        private void PrepareForJson()
+        {
+            // ugly :(
+            if (_client.DefaultRequestHeaders.Accept.Count == 0)
+                _client?.DefaultRequestHeaders.Accept.Add(
+                    new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            /*
+            _client?.DefaultRequestHeaders.Connection.Add("keep-alive");
+            _client?.DefaultRequestHeaders.UserAgent.Add(
+                new System.Net.Http.Headers.ProductInfoHeaderValue("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36 Edg/98.0.1108.62"));
+            */
+        }
+
         public async Task<byte[]> GetBytes(string relativeUri) {
             var result = await _client?.GetByteArrayAsync(relativeUri);
             return result;
@@ -31,9 +44,7 @@ namespace Triggerless.Services.Common
         }
 
         public async Task<string> GetJsonString(string relativeUri) {
-            // retarded :(
-            _client?.DefaultRequestHeaders.Accept.Add(
-                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            PrepareForJson();
             return await _client?.GetStringAsync(relativeUri);
         }
 
