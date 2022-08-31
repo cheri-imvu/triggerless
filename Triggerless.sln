@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.Tests", "Triggerless.Tests\Triggerless.Tests.csproj", "{304F9186-839F-4B72-B14D-328C5C5EE391}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.Services.Common", "Triggerless.ImvuClient\Triggerless.Services.Common.csproj", "{288498D2-5C6C-474C-A58D-531B63E77E13}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.Services.Common", "Triggerless.Services.Common\Triggerless.Services.Common.csproj", "{288498D2-5C6C-474C-A58D-531B63E77E13}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.Models", "Triggerless.Models\Triggerless.Models.csproj", "{C5D16C73-636F-41CC-AD81-5ED0AF0D54E4}"
 EndProject
@@ -27,8 +27,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.Notifier", "Triggerless.Notifier\Triggerless.Notifier.csproj", "{5F90D4C0-3C9E-43F2-9F63-7F6072CB7AD3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.AbandonedProductApp", "Triggerless.AbandonedProductApp\Triggerless.AbandonedProductApp.csproj", "{47A77278-3951-4F4F-8190-75C39F68AF2B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NVorbis", "NVorbis\NVorbis.csproj", "{0BEB1D6D-C0F5-48E0-A006-2EE25B6AEA62}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,10 +74,6 @@ Global
 		{47A77278-3951-4F4F-8190-75C39F68AF2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47A77278-3951-4F4F-8190-75C39F68AF2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47A77278-3951-4F4F-8190-75C39F68AF2B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0BEB1D6D-C0F5-48E0-A006-2EE25B6AEA62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0BEB1D6D-C0F5-48E0-A006-2EE25B6AEA62}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0BEB1D6D-C0F5-48E0-A006-2EE25B6AEA62}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0BEB1D6D-C0F5-48E0-A006-2EE25B6AEA62}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

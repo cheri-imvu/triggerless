@@ -52,9 +52,6 @@
     </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net.Http.Formatting, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.9\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
@@ -90,7 +87,6 @@
     <Compile Include="AvatarCardTests.cs" />
     <Compile Include="RadioTests.cs" />
     <Compile Include="RipControllerTests.cs" />
-    <Compile Include="RipServiceTests.cs" />
     <Compile Include="StoreTests.cs" />
     <Compile Include="TriggerlessApiClientTests.cs" />
     <Compile Include="UserControllerTests.cs" />
@@ -101,10 +97,6 @@
       <Project>{11b74c15-e28a-49af-b21d-9917dff87d22}</Project>
       <Name>Triggerless.API</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Triggerless.ImvuClient\Triggerless.Services.Common.csproj">
-      <Project>{288498d2-5c6c-474c-a58d-531b63e77e13}</Project>
-      <Name>Triggerless.Services.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Triggerless.Models\Triggerless.Models.csproj">
       <Project>{c5d16c73-636f-41cc-ad81-5ed0af0d54e4}</Project>
       <Name>Triggerless.Models</Name>
@@ -112,6 +104,10 @@
     <ProjectReference Include="..\Triggerless.Services.Client\Triggerless.Services.Client.csproj">
       <Project>{4327a996-4b94-4c40-babc-6708ca9389e6}</Project>
       <Name>Triggerless.Services.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Triggerless.Services.Common\Triggerless.Services.Common.csproj">
+      <Project>{288498d2-5c6c-474c-a58d-531b63e77e13}</Project>
+      <Name>Triggerless.Services.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Triggerless.Services.Server\Triggerless.Services.Server.csproj">
       <Project>{2ac77230-17b1-4467-9c01-ffa8ffc290e0}</Project>

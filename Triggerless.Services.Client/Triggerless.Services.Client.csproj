@@ -41,9 +41,6 @@
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
-    </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
@@ -68,13 +65,13 @@
     <Compile Include="TriggerlessApiService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Triggerless.ImvuClient\Triggerless.Services.Common.csproj">
-      <Project>{288498d2-5c6c-474c-a58d-531b63e77e13}</Project>
-      <Name>Triggerless.Services.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Triggerless.Models\Triggerless.Models.csproj">
       <Project>{c5d16c73-636f-41cc-ad81-5ed0af0d54e4}</Project>
       <Name>Triggerless.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Triggerless.Services.Common\Triggerless.Services.Common.csproj">
+      <Project>{288498d2-5c6c-474c-a58d-531b63e77e13}</Project>
+      <Name>Triggerless.Services.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -45,13 +45,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Triggerless.ImvuClient\Triggerless.Services.Common.csproj">
-      <Project>{288498d2-5c6c-474c-a58d-531b63e77e13}</Project>
-      <Name>Triggerless.Services.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Triggerless.Models\Triggerless.Models.csproj">
       <Project>{c5d16c73-636f-41cc-ad81-5ed0af0d54e4}</Project>
       <Name>Triggerless.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Triggerless.Services.Common\Triggerless.Services.Common.csproj">
+      <Project>{288498d2-5c6c-474c-a58d-531b63e77e13}</Project>
+      <Name>Triggerless.Services.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
