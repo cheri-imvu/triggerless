@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Triggerless.Models;
 
@@ -13,10 +14,10 @@ using Triggerless.Models;
 
 namespace Triggerless.Services.Server
 {
-    public class ImvuApiClient: IDisposable
+    public class ImvuApiClient : IDisposable
     {
-        private ImvuApiService _service;
-        private ILog _log;
+        private readonly ImvuApiService _service;
+        private readonly ILog _log;
 
         public ImvuApiClient(ILog log = null)
         {
@@ -55,7 +56,8 @@ namespace Triggerless.Services.Server
                     {
                         result.ParentId = parentId;
                     }
-                } else
+                }
+                else
                 {
                     result.ParentId = 0;
                 }
@@ -79,7 +81,8 @@ namespace Triggerless.Services.Server
                                 result = hiddenProduct;
                                 result.Status = "hidden";
                                 result.Message = "Partial data collected by web scrape";
-                            } else
+                            }
+                            else
                             {
                                 failure.Message = "Crappy Product Data";
                                 result = failure;
@@ -94,12 +97,13 @@ namespace Triggerless.Services.Server
 
                     }
 
-                } else
+                }
+                else
                 {
                     failure.Message = exc.Message;
                     result = failure;
                 }
-                
+
             }
             return result;
         }
@@ -114,7 +118,8 @@ namespace Triggerless.Services.Server
                 var result = j["denormalized"].First.ElementAt(0)["data"].ToObject<ImvuUser>();
                 _log?.Debug($"Success - {nameof(ImvuApiClient)}.{nameof(GetUserByName)}({userName})");
                 return result;
-            } catch (Exception exc)
+            }
+            catch (Exception exc)
             {
                 _log?.Error("ImvuUser JSON could not be retrieved.", exc);
                 return new ImvuUser { Id = -1, Message = exc.Message };
@@ -142,15 +147,31 @@ namespace Triggerless.Services.Server
             catch (Exception exc)
             {
                 _log?.Error($"Unable to get User with ID ({userId})", exc);
-                return new ImvuUser { Id = userId, AvatarName = "unavailable", Error = exc.Message, Status = "failed"};
+                return new ImvuUser { Id = userId, AvatarName = "unavailable", Error = exc.Message, Status = "failed" };
             }
+        }
+
+
+        public async Task<ImvuProductList> GetProductsExt(IEnumerable<long> productIds)
+        {
+            var result = new ImvuProductList();
+            var bag = new ConcurrentBag<ImvuProduct>();
+            //var ss = new SemaphoreSlim(10);
+            //await ss.WaitAsync();
+
+            foreach (var id in productIds)
+            {
+                bag.Add(await GetProduct(id));
+            }
+            result.Products = bag.ToArray();
+            return result;
         }
 
         public async Task<ImvuProductList> GetProducts(IEnumerable<long> p)
         {
             var result = new ImvuProductList();
             // the "dumb" way
-            
+
 
             var list = new ConcurrentBag<ImvuProduct>();
             foreach (var productId in p)
@@ -159,64 +180,6 @@ namespace Triggerless.Services.Server
             }
             result.Products = list.ToArray();
             return result;
-            
-
-
-
-
-
-
-            // the "smart" way
-            /*
-            var cache = new Dictionary<long, ImvuProduct>();
-            p.ToList().ForEach(id => cache[id] = null);
-
-            var relUri = $"/product?id=";
-            var delim = "";
-            foreach (var productId in p)
-            {
-                relUri += delim + $"https%3A%2F%2Fapi.imvu.com%2Fproduct%2Fproduct-{productId}";
-                delim = "%2C";
-            }
-
-            relUri = "/product?id=https%3A%2F%2Fapi.imvu.com%2Fproduct%2Fproduct-10599276%2Chttps%3A%2F%2Fapi.imvu.com%2Fproduct%2Fproduct-10599277%2Chttps%3A%2F%2Fapi.imvu.com%2Fproduct%2Fproduct-10599278";
-
-            JObject j = await _service.GetJObject(relUri);
-            var denorm = j["denormalized"];
-            var returnedProducts = new ImvuProduct[denorm.Count() - 1];
-
-            foreach (var child in denorm.Children())
-            {
-                var product = child.First["data"].ToObject<ImvuProduct>();
-                product.Status = "success";
-                if (product.Id == 0) continue;
-
-                var rels = child.First["relations"].ToObject<ImvuProductRelations>();
-                var parentUrl = rels.Parent;
-                var parent = parentUrl.Replace("https://api.imvu.com/product/product-", string.Empty);
-                if (int.TryParse(parent, out int parentId))
-                {
-                    product.ParentId = parentId;
-                }
-                cache[product.Id] = product;
-            }
-
-            foreach (var id in cache.Where(x => x.Value == null).ToList())
-            {
-                var product = new ImvuProduct
-                {
-                    Status = "failure",
-                    Id = id.Key
-                };
-                cache[product.Id] = product;
-
-            }
-
-            result.Products = cache.Values.ToArray();
-
-            return result;
-            
-            */
         }
 
         public async Task<string> GetAvatarCardJson(string idOrName)
@@ -267,6 +230,57 @@ namespace Triggerless.Services.Server
         public void Dispose()
         {
             _service?.Dispose();
+        }
+
+        public async Task<ExposeOutfitsResponse> GetOutfits(ExposeOutfitsRequest req)
+        {
+            var bag = new ConcurrentBag<ExposeOutfitsResponseEntry>();
+
+            var ss = new SemaphoreSlim(6);
+            await ss.WaitAsync();
+
+            Parallel.ForEach(req.Entries, async entry =>
+            //foreach (var entry in req.Entries)
+            {
+                bag.Add(await GetOutfit(entry));
+                ss.Release();
+            });
+
+            var list = new List<ExposeOutfitsResponseEntry>(bag.OrderBy(entry => entry.User.AvatarName.Replace("Guest_", "").ToUpper()));
+            return new ExposeOutfitsResponse { Entries = list.ToArray() };
+        }
+
+        public static ExposeOutfitsRequest RequestFromUrl(string input)
+        {
+            const string PREFIX = "https://www.imvu.com/client.php?";
+            if (!input.StartsWith(PREFIX))
+            {
+                throw new ArgumentException("URL input not supported");
+            }
+
+            var pieces = input.Substring(PREFIX.Length).Split('&');
+            var list = new List<ExposeOutfitsRequestEntry>();
+            foreach (var piece in pieces)
+            {
+                if (!piece.StartsWith("avatar")) { continue; }
+                var nameValue = piece.Split('=');
+                if (nameValue.Length == 2)
+                {
+                    var entry = new ExposeOutfitsRequestEntry { };
+                    entry.AvatarId = long.Parse(nameValue[0].Replace("avatar", ""));
+                    entry.ProductIds = nameValue[1].Split(new[] { "%3B" }, StringSplitOptions.None).Select(pid => long.Parse(pid)).ToArray();
+                    list.Add(entry);
+                }
+            }
+            return new ExposeOutfitsRequest { Entries = list.ToArray() };
+        }
+
+        public async Task<ExposeOutfitsResponseEntry> GetOutfit(ExposeOutfitsRequestEntry entry)
+        {
+            return new ExposeOutfitsResponseEntry {
+                User = await GetUser(entry.AvatarId),
+                Products = (await GetProductsExt(entry.ProductIds)).Products
+            };
         }
     }
 }

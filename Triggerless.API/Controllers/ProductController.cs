@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using Newtonsoft.Json.Linq;
 using Triggerless.Models;
@@ -39,5 +41,26 @@ namespace Triggerless.API.Controllers
             }
             
         }
+
+        [HttpPost, Route("api/outfits")]
+        public async Task<ExposeOutfitsResponse> GetOutfits([FromBody] ExposeOutfitsRequest req)
+        {
+            //var req = ImvuApiClient.RequestFromUrl(url);
+            using (var client = new ImvuApiClient())
+            {
+                return await client.GetOutfits(req);
+            }
+        }
+
+        [HttpPost, Route("api/outfit")]
+        public async Task<ExposeOutfitsResponseEntry> GetOutfit([FromBody] ExposeOutfitsRequestEntry req)
+        {
+            //var req = ImvuApiClient.RequestFromUrl(url);
+            using (var client = new ImvuApiClient())
+            {
+                return await client.GetOutfit(req);
+            }
+        }
     }
 }
+

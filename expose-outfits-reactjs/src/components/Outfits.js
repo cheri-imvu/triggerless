@@ -7,43 +7,43 @@ const Outfits = () => {
     const [state, setState] = useState({avatars: [], room: [], apHidden: false})
 
     const getApHidden = () => {
-        let apHidden = document.getElementById("apHidden");
+        let apHidden = document.getElementById("apHidden")
         return apHidden.checked
     }
 
     const clearLink = () => {
-        document.getElementById("webLink").value = '';
-        setState({apHidden: state.apHidden, avatars: [], room: []});
+        document.getElementById("webLink").value = ''
+        setState({apHidden: state.apHidden, avatars: [], room: []})
         console.log(state)
     }
 
     const processLink = () => {
         let webLink = document.getElementById("webLink").value
-        let linkData = getLinkData(webLink);
-        let newState = {avatars: [], room: state.room, apHidden: getApHidden()};
+        let linkData = getLinkData(webLink)
+        let newState = {avatars: [], room: state.room, apHidden: getApHidden()}
         if (linkData.avatars == null) {
-            setState(newState);
-            return;
+            setState(newState)
+            return
         }
-        let server = 'https://triggerless.com/api';  //hosted
-        //let server = 'http://localhost:61120/api';  // development
+        let server = 'https://triggerless.com/api'  //hosted
+        //let server = 'http://localhost:61120/api'  // development
 
 
 
         linkData.avatars.forEach(avi => {
-
+            console.log(avi.id)
             fetch(`${server}/user/${avi.id}`)
             .then(res => res.json())
             .then(data => {
-                let currentUser = data;
-                let queryString = 'p=' + avi.products.join('&p=');
+                let currentUser = data
+                let queryString = 'p=' + avi.products.join('&p=')
                 fetch(`${server}/products?${queryString}`)
                 .then(res => res.json())
                 .then(data => {
                     currentUser.products = data.Products.filter(p => p.product_name != null) // remove products hidden in catalog
                     newState = {avatars: [...newState.avatars, currentUser], room: state.room, apHidden: getApHidden()}
-                    console.log(newState);
-                    setState(newState);
+                    console.log(newState)
+                    setState(newState)
                 });
             })
         });

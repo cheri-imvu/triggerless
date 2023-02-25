@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace Triggerless.Services.Server
 {
@@ -11,7 +12,7 @@ namespace Triggerless.Services.Server
     {
         public static async Task<SqlConnection> Get()
         {
-            var connStr = "Data Source=yew.arvixe.com; Initial Catalog=bootsters_db; User=bootsters; Password=$bootsters$";
+            var connStr = ConfigurationManager.ConnectionStrings["bootsters_db"].ConnectionString;
             var result = new SqlConnection(connStr);
             await result.OpenAsync();
 

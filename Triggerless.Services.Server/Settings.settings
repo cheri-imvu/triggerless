@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="osCsid" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">0123456789abcdef0123456789abcdef</Value>
+      <Value Profile="(Default)">4cfedf4682bdd8bbc951f6f5a92daab0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

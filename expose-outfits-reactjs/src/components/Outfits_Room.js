@@ -8,23 +8,23 @@ const Outfits = () => {
     const [state, setState] = useState({avatars: [], room: []})
 
     const clearLink = () => {
-        document.getElementById("webLink").value = '';
-        setState({avatars: [], room: []});
+        document.getElementById("webLink").value = ''
+        setState({avatars: [], room: []})
     }
 
     const processLink = () => {
         let webLink = document.getElementById("webLink").value
-        let linkData = getLinkData(webLink);
-        let newState = {avatars: [], room: []};
+        let linkData = getLinkData(webLink)
+        let newState = {avatars: [], room: []}
         
         if (linkData.avatars == null || linkData.avatars.length === 0) {
-            setState({...newState});
+            setState({...newState})
             return;
         }
         setState(newState);
         console.log(state);
-        //let server = 'https://triggerless.com/api';  //hosted
-        let server = 'http://localhost:61120/api';  // development
+        //let server = 'https://triggerless.com/api'  //hosted
+        let server = 'http://localhost:61120/api'  // development
 
         // Loop through avatars and get all their products
 
@@ -32,16 +32,16 @@ const Outfits = () => {
             fetch(`${server}/user/${avi.id}`)
             .then(res => res.json())
             .then(data => {
-                let currentUser = data;
-                let queryString = 'p=' + avi.products.join('&p=');
+                let currentUser = data
+                let queryString = 'p=' + avi.products.join('&p=')
                 fetch(`${server}/products?${queryString}`)
                 .then(res => res.json())
                 .then(data => {
                     currentUser.products = data.Products.filter(p => p.product_name != null)
-                    console.log(currentUser);
+                    console.log(currentUser)
                     newState = {...state, avatars: [...state.avatars, currentUser]}
                     setState(newState);
-                    console.log('newState', newState);
+                    console.log('newState', newState)
                 });
             })
         });       
@@ -49,7 +49,7 @@ const Outfits = () => {
 
         // Get the room products first
         const getRoom = (server, linkData) => {
-            let qs = 'p=' + linkData.room.join('&p=');
+            let qs = 'p=' + linkData.room.join('&p=')
             fetch(`${server}/products?${qs}`)
                 .then(res => res.json())
                 .then(data => {

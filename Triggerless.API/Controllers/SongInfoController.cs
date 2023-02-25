@@ -21,7 +21,7 @@ namespace Triggerless.API.Controllers
             _log?.Debug($"GET api/SongInfo/{pid} start");
             try
             {
-                var result = new RipService(_log).GetSongInfo(pid);
+                var result = new NVorbisService(_log).GetSongInfo(pid);
                 _log?.Debug($"GET api/SongInfo/{pid} {result.Entries.Count} song infos returned.");
                 return new HttpResponseMessage(HttpStatusCode.OK) { Content = new JsonContent(result) };
             } catch (Exception exc)

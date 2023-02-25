@@ -5,7 +5,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using log4net;
+using Newtonsoft.Json;
 using NVorbis;
+using Triggerless.Models;
+using Triggerless.XAFLib;
 
 namespace Triggerless.Services.Server
 {
@@ -124,8 +127,8 @@ namespace Triggerless.Services.Server
             _log?.Debug($"{nameof(RipService)}.{nameof(GetSongInfo)} pid = {pid}");
             // Initialize variables
             SongInfo result = new SongInfo() { ProductID = pid };
-            var contentsUrl = GetUrl(pid, "_contents.json");
-            var indexUrl = GetUrl(pid, "index.xml");
+            var contentsUrl = RipService.GetUrl(pid, "_contents.json");
+            var indexUrl = RipService.GetUrl(pid, "index.xml");
             ProductList productList;
             Template template = null;
 

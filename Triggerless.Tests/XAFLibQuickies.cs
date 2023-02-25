@@ -269,5 +269,61 @@ namespace Triggerless.Tests
 
         }
 
+        [Test]
+        public void MakeXPF()
+        {
+            var list = new List<VocalEntry>(){
+                new VocalEntry { StartsAt = 0.08F, Shape = VocalShape.AH },
+                new VocalEntry { StartsAt = 0.20F, Shape = VocalShape.EE },
+                new VocalEntry { StartsAt = 0.23F, Shape = VocalShape.OO },
+                new VocalEntry { StartsAt = 0.38F, Shape = VocalShape.EH },
+                new VocalEntry { StartsAt = 0.49F, Shape = VocalShape.EE },
+                new VocalEntry { StartsAt = 0.63F, Shape = VocalShape.MM },
+                new VocalEntry { StartsAt = 0.69F, Shape = VocalShape.OH },
+                new VocalEntry { StartsAt = 0.80F, Shape = VocalShape.MM },
+                new VocalEntry { StartsAt = 0.85F, Shape = VocalShape.EE },
+                new VocalEntry { StartsAt = 1.04F, Shape = VocalShape.OO },
+                new VocalEntry { StartsAt = 1.30F, Shape = VocalShape.OH },
+                new VocalEntry { StartsAt = 1.52F, Shape = VocalShape.AH },
+                new VocalEntry { StartsAt = 1.75F, Shape = VocalShape.EH },
+                new VocalEntry { StartsAt = 1.88F, Shape = VocalShape.AH },
+                new VocalEntry { StartsAt = 2.07F, Shape = VocalShape.OO },
+                new VocalEntry { StartsAt = 2.24F, Shape = VocalShape.AH },
+                new VocalEntry { StartsAt = 2.36F, Shape = VocalShape.MM },
+                new VocalEntry { StartsAt = 2.40F, Shape = VocalShape.EE },
+                new VocalEntry { StartsAt = 2.43F, Shape = VocalShape.OH },
+                new VocalEntry { StartsAt = 2.60F, Shape = VocalShape.AH },
+                new VocalEntry { StartsAt = 2.81F, Shape = VocalShape.OH },
+                new VocalEntry { StartsAt = 3.05F, Shape = VocalShape.OO },
+                new VocalEntry { StartsAt = 3.12F, Shape = VocalShape.MM },
+                new VocalEntry { StartsAt = 3.15F, Shape = VocalShape.AY },
+                new VocalEntry { StartsAt = 3.33F, Shape = VocalShape.MM },
+                new VocalEntry { StartsAt = 3.37F, Shape = VocalShape.OO },
+                new VocalEntry { StartsAt = 3.60F, Shape = VocalShape.MM },
+                new VocalEntry { StartsAt = 4.00F, Shape = VocalShape.AY },
+                new VocalEntry { StartsAt = 4.13F, Shape = VocalShape.MM },
+                new VocalEntry { StartsAt = 4.20F, Shape = VocalShape.AH },
+                new VocalEntry { StartsAt = 4.45F, Shape = VocalShape.OH },
+                new VocalEntry { StartsAt = 4.67F, Shape = VocalShape.MM },
+                new VocalEntry { StartsAt = 4.73F, Shape = VocalShape.EE },
+                new VocalEntry { StartsAt = 4.98F, Shape = VocalShape.MM },
+            };
+
+            var service = new MorphAnimationService();
+            var morphAnim = service.Convert(list);
+            Assert.That(morphAnim.Tracks.Count == 3, "Wrong number of tracks");
+            //Assert.That(morphAnim.Tracks[0].KeyFrames.Count == 20, "Wrong number of frames");
+            float time = -1;
+            foreach(var frame in morphAnim.Tracks[1].KeyFrames)
+            {
+                Assert.That(frame.Time >= time, "Frames out of order");
+                time = frame.Time;
+            }
+
+            morphAnim.WriteXml(@"D:\DEV\Accessorie\Products\PoseAction\Speak\ready.xpf");
+
+
+        }
+
     }
 }

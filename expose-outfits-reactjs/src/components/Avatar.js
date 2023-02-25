@@ -2,10 +2,10 @@ import './Avatar.css'
 import Product from './Product'
 
 const Avatar = (props) => {
-    let name = props.avatar.avatarname;
-    let photo = props.avatar.photo;
-    let products = props.avatar.products;
-    let apHidden = props.apHidden;
+    let name = props.avatar.avatarname
+    let photo = props.avatar.photo
+    let products = props.avatar.products
+    let apHidden = props.apHidden
 
     return (
         <div className="av-ctr">

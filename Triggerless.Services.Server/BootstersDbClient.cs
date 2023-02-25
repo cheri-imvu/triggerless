@@ -27,7 +27,7 @@ namespace Triggerless.Services.Server
             using (var conn = await BootstersDbConnection.Get())
             {
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = "triggerless_radio_add_song";
+                cmd.CommandText = "bootsters.triggerless_radio_add_song";
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@djname", post.djName);
                 cmd.Parameters.AddWithValue("@title", post.title);
@@ -57,7 +57,7 @@ namespace Triggerless.Services.Server
             using (var conn = await BootstersDbConnection.Get())
             {
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = "triggerless_radio_get_songs";
+                cmd.CommandText = "bootsters.triggerless_radio_get_songs";
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@djname", djName);
                 cmd.Parameters.AddWithValue("@count", count);
@@ -94,7 +94,7 @@ namespace Triggerless.Services.Server
             using (var cxn = await BootstersDbConnection.Get())
             {
                 var sql =
-                    $"INSERT INTO rip_log (productId, ipAddress, date) VALUES ({productId}, '{ipAddress}', '{date:yyyy-MM-dd HH:mm:ss}')";
+                    $"INSERT INTO bootsters.rip_log (productId, ipAddress, date) VALUES ({productId}, '{ipAddress}', '{date:yyyy-MM-dd HH:mm:ss}')";
                 _log?.Debug($"SQL : {sql}");
                 var cmd = cxn.CreateCommand();
                 cmd.CommandType = CommandType.Text;
@@ -111,7 +111,7 @@ namespace Triggerless.Services.Server
             using (var cxn = await BootstersDbConnection.Get())
             {
                 var sql =
-                    $"select ipAddress, count(ipAddress) as [Count] FROM [rip_log] where productId != 32678253 and ipAddress !='73.115.184.179' group by ipAddress order by [Count] desc";
+                    $"select ipAddress, count(ipAddress) as [Count] FROM bootsters.rip_log where productId != 32678253 and ipAddress !='73.115.184.179' group by ipAddress order by [Count] desc";
                 var cmd = cxn.CreateCommand();
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandText = sql;
@@ -137,7 +137,7 @@ namespace Triggerless.Services.Server
             using (var cxn = await BootstersDbConnection.Get())
             {
                 var sql =
-                    $"select ipAddress, date, productId, id FROM [rip_log] where ipAddress = '{ipAddress}' order by date desc";
+                    $"select ipAddress, date, productId, id FROM bootsters.rip_log where ipAddress = '{ipAddress}' order by date desc";
                 var cmd = cxn.CreateCommand();
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandText = sql;
@@ -169,7 +169,7 @@ namespace Triggerless.Services.Server
                 var sqlDate = startDate.ToString("yyyy-MM-dd HH:mm:ss");
 
                 var sql =
-                    $"select ipAddress, date, productId, id FROM [rip_log] where date between '{sqlDate}' and DATEADD(hour, {hours}, '{sqlDate}') order by date asc";
+                    $"select ipAddress, date, productId, id FROM bootsters.rip_log where date between '{sqlDate}' and DATEADD(hour, {hours}, '{sqlDate}') order by date asc";
                 var cmd = cxn.CreateCommand();
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandText = sql;
@@ -200,7 +200,7 @@ namespace Triggerless.Services.Server
             using (var cxn = await BootstersDbConnection.Get())
             {
                 var sql =
-                    $"select ipAddress, date, productId, id FROM [rip_log] where ipAddress = '{ipAddress}' order by date desc";
+                    $"select ipAddress, date, productId, id FROM bootsters.rip_log where ipAddress = '{ipAddress}' order by date desc";
                 var cmd = cxn.CreateCommand();
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandText = sql;
