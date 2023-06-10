@@ -30,14 +30,14 @@ namespace Triggerless.XAFLib
         public override void AddXml(XmlElement parent, int? index = null) {
             if (parent == null || !index.HasValue) return;
             if (parent.OwnerDocument != null) {
-                XmlElement result = parent.OwnerDocument.CreateElement("Action" + index);
+                XmlElement result = parent.OwnerDocument.CreateElement(nameof(Action) + index);
 
                 if (Definition.ActionDefinition.Ensembles.Count > 0)
                 {
                     Definition.AddXml(result);
                 }
 
-                XmlElement name = parent.OwnerDocument.CreateElement("Name");
+                XmlElement name = parent.OwnerDocument.CreateElement(nameof(Name));
                 name.InnerText = Name;
                 result.AppendChild(name);
 
@@ -50,11 +50,13 @@ namespace Triggerless.XAFLib
         }
 
         public override void AppendText(StringBuilder sb, int? index = null) {
-            sb.AppendUnixLine(Open("Action" + index));
+            sb.AppendUnixLine(Open(nameof(Action) + index));
             Definition.AppendText(sb);
             Sound.AppendText(sb);
-            sb.AppendUnixLine(Open("Name") + Name + Close("Name"));
-            sb.AppendUnixLine(Close("Action" + index));
+            sb.AppendUnixLine(
+                Open(nameof(Name)) + Name + Close(nameof(Name))
+            );
+            sb.AppendUnixLine(Close(nameof(Action) + index));
         }
 
         public override void LoadXml(XmlNode node) {
