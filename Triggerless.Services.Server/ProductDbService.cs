@@ -20,10 +20,10 @@ namespace Triggerless.Services.Server
             _coll.Insert(product);
         }
 
-        public ImvuProduct Find(long id)
-        {
+        //public ImvuProduct Find(long id)
+        //{
 
-        }
+        //}
 
         public void Dispose()
         {
