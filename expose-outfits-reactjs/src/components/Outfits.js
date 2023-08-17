@@ -25,19 +25,35 @@ const Outfits = () => {
             setState(newState)
             return
         }
-        let server = 'https://triggerless.com/api'  //hosted
+        let server = 'https://triggerless.com/api'  //hosted        
         //let server = 'http://localhost:61120/api'  // development
 
 
 
         linkData.avatars.forEach(avi => {
             console.log(avi.id)
-            fetch(`${server}/user/${avi.id}`)
+            fetch(`user.php?id=${avi.id}`
+            /*fetch(`${server}/user/${avi.id}`, {
+                mode: 'cors',
+                headers: {
+                    'Sec-Fetch-Dest': 'empty',
+                    'Sec-Fetch-Mode': 'cors',
+                    'Sec-Fetch-Site': 'cross-site'                
+                }
+            }*/)
             .then(res => res.json())
             .then(data => {
                 let currentUser = data
                 let queryString = 'p=' + avi.products.join('&p=')
-                fetch(`${server}/products?${queryString}`)
+                fetch(`products.php?${queryString}`
+                /*fetch(`${server}/products?${queryString}`, {
+                    mode: 'cors',
+                    headers: {
+                        'Sec-Fetch-Dest': 'empty',
+                        'Sec-Fetch-Mode': 'cors',
+                        'Sec-Fetch-Site': 'cross-site'                
+                    }
+                }*/)
                 .then(res => res.json())
                 .then(data => {
                     currentUser.products = data.Products.filter(p => p.product_name != null) // remove products hidden in catalog
@@ -47,8 +63,6 @@ const Outfits = () => {
                 });
             })
         });
-        
-        
     }
 
     return (
@@ -70,7 +84,7 @@ const Outfits = () => {
                 </div>
                 <div style={{paddingLeft: "25px"}}>
                     <input type="checkbox" id="apHidden" onChange={processLink} />
-                    <label for="apHidden">AP, VBs &amp; Hidden Only</label>
+                    <label htmlFor="apHidden">AP, VBs &amp; Hidden Only</label>
                 </div>
                 </td>
                 <td>
@@ -127,7 +141,6 @@ const getLinkData = (str) => {
         } else if (snip3[0] === 'room') {
             linkData.room = snip3[1].split('%3B').map(p => p.split('x')[0]);
         } else continue;
-
     }
 
     linkData.status = 'success';
