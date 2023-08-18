@@ -5,3 +5,29 @@
     cursor: pointer;
     padding: 10px;
 }
+
+a.avis {
+    margin-left: 3px;
+    margin-right: 3px;
+    color: powderblue;
+    background-color: inherit;
+    text-decoration: none;
+}
+
+a.avis:active {
+    color: powderblue;
+    background-color: inherit;
+    text-decoration: none;
+}
+
+a.avis:visited {
+    color: powderblue;
+    background-color: inherit;
+    text-decoration: none;
+}
+
+a.avis:hover {
+    color: lightgoldenrodyellow;
+    background-color: black;
+    text-decoration: underline;
+} 

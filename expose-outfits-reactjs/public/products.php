@@ -1,7 +1,6 @@
 <?php
 
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
 $queryString = $_SERVER['QUERY_STRING'];
 
 $remote_api_url = "https://triggerless.com/api/products?${queryString}";

@@ -26,14 +26,16 @@ const Outfits = () => {
             return
         }
 
+        let urlPart = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080/'
+
         linkData.avatars.forEach(avi => {
             console.log(avi.id)
-            fetch(`user.php?id=${avi.id}`)
+            fetch(`${urlPart}user.php?id=${avi.id}`)
             .then(res => res.json())
             .then(data => {
                 let currentUser = data
                 let queryString = 'p=' + avi.products.join('&p=')
-                fetch(`products.php?${queryString}`)
+                fetch(`${urlPart}products.php?${queryString}`)
                 .then(res => res.json())
                 .then(data => {
                     currentUser.products = data.Products.filter(p => p.product_name != null) // remove products hidden in catalog
@@ -78,9 +80,29 @@ const Outfits = () => {
             </tbody>
         </table>
         <div>
-            {state.avatars.map((avi) => (
-                <Avatar key={avi.id} avatar={avi} apHidden={state.apHidden} />
-            ))}
+            <strong>Avatars:</strong> {
+                state
+                    .avatars
+                    .sort((a, b) => {
+                        let fa = a.avatarname.toLowerCase(), fb = b.avatarname.toLowerCase()
+                        return (fa < fb) ? -1 : (fb < fa) ? 1 : 0
+                    })
+                    .map((avi) => (
+                        <a className="avis" key={avi.id} href={'#' + avi.avatarname}>{' ' + avi.avatarname}</a> 
+                    ))
+                }
+        </div>
+        <div>
+            {state
+                .avatars
+                .sort((a, b) => {
+                    let fa = a.avatarname.toLowerCase(), fb = b.avatarname.toLowerCase()
+                    return (fa < fb) ? -1 : (fb < fa) ? 1 : 0
+                })
+                .map((avi) => (
+                    <Avatar key={avi.id} avatar={avi} apHidden={state.apHidden} />
+                ))
+            }
         </div>
         </>
     )

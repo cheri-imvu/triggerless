@@ -10,9 +10,12 @@ const Avatar = (props) => {
     return (
         <div className="av-ctr">
             <div>
-                <div className="av-name">{name}</div>
+                <div className="av-name">{name}
+                    <a name={name} />
+                </div>
+
                 <div className="av-photo">
-                    <a target="_blank" rel="noreferrer" href={"https://avatars.imvu.com/" + name}>
+                    <a target="_blank" rel="noreferrer" href={"https://avatars.imvu.com/" + name} >
                     <img src={photo} className="img-photo" style={{height: "110px"}} alt={'image of ' + name}/>
                     </a>
                 </div>
