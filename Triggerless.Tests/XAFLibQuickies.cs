@@ -63,8 +63,6 @@ namespace Triggerless.Tests
                 xaf.Save(filename, anim);
                 
             }
-
-
         }
 
         private class TriggerEntry

@@ -155,20 +155,33 @@ namespace Triggerless.Services.Server
         public async Task<ImvuProductList> GetProductsExt(IEnumerable<long> productIds)
         {
             var result = new ImvuProductList();
-            var bag = new ConcurrentBag<ImvuProduct>();
-            //var ss = new SemaphoreSlim(10);
-            //await ss.WaitAsync();
+            var list = new ConcurrentBag<ImvuProduct>();
+            var semaphore = new SemaphoreSlim(10); // Limit to 10 concurrent tasks
 
-            foreach (var id in productIds)
+            var tasks = productIds.Select(async productId =>
             {
-                bag.Add(await GetProduct(id));
-            }
-            result.Products = bag.ToArray();
+                await semaphore.WaitAsync(); // Wait for the semaphore to be available
+                try
+                {
+                    var product = await GetProduct(productId);
+                    list.Add(product); // Add the product to the ConcurrentBag
+                }
+                finally
+                {
+                    semaphore.Release(); // Release the semaphore
+                }
+            });
+
+            await Task.WhenAll(tasks); // Wait for all tasks to complete
+
+            result.Products = list.ToArray();
             return result;
         }
 
         public async Task<ImvuProductList> GetProducts(IEnumerable<long> p)
         {
+            return await GetProductsExt(p);
+            /*
             var result = new ImvuProductList();
             // the "dumb" way
 
@@ -180,6 +193,7 @@ namespace Triggerless.Services.Server
             }
             result.Products = list.ToArray();
             return result;
+            */
         }
 
         public async Task<string> GetAvatarCardJson(string idOrName)

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30413.136
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.API", "Triggerless.API\Triggerless.API.csproj", "{11B74C15-E28A-49AF-B21D-9917DFF87D22}"
 EndProject
@@ -27,6 +27,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.Notifier", "Triggerless.Notifier\Triggerless.Notifier.csproj", "{5F90D4C0-3C9E-43F2-9F63-7F6072CB7AD3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.AbandonedProductApp", "Triggerless.AbandonedProductApp\Triggerless.AbandonedProductApp.csproj", "{47A77278-3951-4F4F-8190-75C39F68AF2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triggerless.XPFTool", "Triggerless.XPFTool\Triggerless.XPFTool.csproj", "{8C90D73F-3798-4C32-BB39-D8DED197A51D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,6 +76,10 @@ Global
 		{47A77278-3951-4F4F-8190-75C39F68AF2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47A77278-3951-4F4F-8190-75C39F68AF2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47A77278-3951-4F4F-8190-75C39F68AF2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C90D73F-3798-4C32-BB39-D8DED197A51D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C90D73F-3798-4C32-BB39-D8DED197A51D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C90D73F-3798-4C32-BB39-D8DED197A51D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C90D73F-3798-4C32-BB39-D8DED197A51D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
