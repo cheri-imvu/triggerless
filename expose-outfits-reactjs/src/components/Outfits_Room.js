@@ -23,8 +23,9 @@ const Outfits = () => {
         }
         setState(newState);
         console.log(state);
-        //let server = 'https://triggerless.com/api'  //hosted
-        let server = 'http://localhost:61120/api'  // development
+        let remoteServer = 'https://triggerless.com/api'  // production
+        let localServer = 'http://localhost:61120/api'  // development
+        let server = remoteServer
 
         // Loop through avatars and get all their products
 
@@ -56,11 +57,11 @@ const Outfits = () => {
                     let roomProds = data.Products.filter(p => p.product_name != null)
                     newState = {...state, room: roomProds}
                     setState(newState);
-                    //console.log(state);
+                    console.log('newState', state);
                 }
             );
         }
-
+        getRoom(server, linkData)
         const promise = new Promise((resolve, reject) => {
 
         });
@@ -105,47 +106,48 @@ const Outfits = () => {
     )
 }
 
-const getLinkData = (str) => {
+const getLinkData = (url) => {
     let linkData = {
         status: 'failure',
         message: 'Sorry, that link won\'t work. Please try again.'
     }
 
-    str = str.replace('\n', '').replace(' '); // remove all whitespace
+    url = url.replace('\n', '').replace(' ') // remove all whitespace
 
     //snip1 URL and query string
 
-    let snip1 = str.split('?');
-    if (snip1.length !== 2) return linkData;
+    let snipQS = str.split('?')
+    if (snipQS.length !== 2) return linkData
 
     // snip2 query parameters
 
-    let snip2 = snip1[1].split('&');
-    if (snip2.length < 2) return linkData; // at least avatar and room should be available
+    let queryString = snipQS[1]
+    let snipNameVales = queryString.split('&')
+    if (snipNameVales.length < 2) return linkData // at least avatar and room should be available
 
-    linkData.avatars = [];
-    linkData.room = [];
+    linkData.avatars = []
+    linkData.room = []
 
-    for (let i = 0; i < snip2.length; i++) {
-        // snip3 name and value
+    for (let i = 0; i < snipNameVales.length; i++) {
+        let nameValue = snipNameVales[i]
+        let snipNV = nameValue.split('=')
+        if (snipNV.length !== 2) continue
 
-        let snip3 = snip2[i].split('=');
-        if (snip3.length !== 2) continue;
-
-        if (snip3[0].indexOf('avatar') === 0) {
+        let name = snipNV[0]
+        let value = snipNV[1]
+        if (name.indexOf('avatar') === 0) {
             linkData.avatars.push({
-                id: snip3[0].replace('avatar', ''),
-                products: snip3[1].split('%3B')
-            });
+                id: name.replace('avatar', ''),
+                products: value.split('%3B')
+            })
         } else if (snip3[0] === 'room') {
-            linkData.room = snip3[1].split('%3B').map(p => p.split('x')[0]);
-        } else continue;
-
+            linkData.room = value.split('%3B').map(p => p.split('x')[0])
+        } else continue
     }
 
-    linkData.status = 'success';
+    linkData.status = 'success'
     linkData.message = `Decoded room and ${linkData.avatars.length} avatars.`
-    return linkData;
+    return linkData
 
 }
 export default Outfits
