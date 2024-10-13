@@ -1,6 +1,8 @@
+
 import Avatar from "./Avatar"
 import { useState } from 'react'
 import './Outfits.css'
+import Room from "./Room"
 
 const Outfits = () => {
 
@@ -16,36 +18,86 @@ const Outfits = () => {
         setState({apHidden: state.apHidden, avatars: [], room: []})
         console.log(state)
     }
-
-    const processLink = () => {
-        let webLink = document.getElementById("webLink").value
-        let linkData = getLinkData(webLink)
-        let newState = {avatars: [], room: state.room, apHidden: getApHidden()}
+        
+    const processLink = async () => {
+        let webLink = document.getElementById("webLink").value;
+        let linkData = getLinkData(webLink);
+        let newState = { avatars: [], room: state.room, apHidden: getApHidden() };
         if (linkData.avatars == null) {
-            setState(newState)
-            return
+            setState(newState);
+            return;
+        }
+    
+        let urlPart = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080/';
+
+        const getProducts = async (productIDs) => {
+            const queryString = 'p=' + productIDs.join('&p=');
+            const productsResponse = await fetch(`${urlPart}products.php?${queryString}`);
+            const productsData = await productsResponse.json();
+            return productsData.Products.filter(p => p.product_name != null); // remove hidden products
         }
 
-        let urlPart = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080/'
+        // get the room first
+        
+        const roomProductList = linkData.room.map(id => id.split('x')[0]) //gets rid of x2 on the end
+        const roomData = await getProducts(roomProductList);
 
-        linkData.avatars.forEach(avi => {
-            console.log(avi.id)
-            fetch(`${urlPart}user.php?id=${avi.id}`)
-            .then(res => res.json())
-            .then(data => {
-                let currentUser = data
-                let queryString = 'p=' + avi.products.join('&p=')
-                fetch(`${urlPart}products.php?${queryString}`)
-                .then(res => res.json())
-                .then(data => {
-                    currentUser.products = data.Products.filter(p => p.product_name != null) // remove products hidden in catalog
-                    newState = {avatars: [...newState.avatars, currentUser], room: state.room, apHidden: getApHidden()}
-                    console.log(newState)
-                    setState(newState)
-                });
-            })
-        });
-    }
+        setState(prevState => ({
+            ...prevState,
+            room: [...prevState.room, roomData]
+        }));
+        console.log(state)
+        /*        
+        const roomState = {
+            avatars: [...state.avatars],
+            room: [...state.room, roomData],
+            apHidden: getApHidden()
+        }
+        console.log(roomState)
+        setState(roomState)
+        */
+        
+    
+        // Concurrency limit logic
+        const limit = 10; // Limit to 10 concurrent fetches
+        const fetchWithLimit = async (linkDataAvi) => {
+            const userResponse = await fetch(`${urlPart}user.php?id=${linkDataAvi.id}`);
+            const currentUser = await userResponse.json();
+    
+            currentUser.products = await getProducts(linkDataAvi.products) 
+
+             // Use functional form of setState to ensure you always work with the latest state
+            setState(prevState => ({
+                ...prevState,
+                avatars: [...prevState.avatars, currentUser]
+            }));
+            console.log(state)
+            /*
+            newState = { 
+                avatars: [...newState.avatars, currentUser], 
+                room: [...state.room], 
+                apHidden: getApHidden() 
+            };
+            console.log(newState);
+            setState(newState);
+            */
+        };
+    
+        const chunkArray = (array, size) => {
+            const chunks = [];
+            for (let i = 0; i < array.length; i += size) {
+                chunks.push(array.slice(i, i + size));
+            }
+            return chunks;
+        };
+    
+        // Process avatars in chunks to respect the concurrency limit
+        const avatarChunks = chunkArray(linkData.avatars, limit);
+        for (const chunk of avatarChunks) {
+            await Promise.all(chunk.map(fetchWithLimit));
+        }
+    };
+    
 
     return (
         <>
@@ -75,11 +127,13 @@ const Outfits = () => {
                 </td>
             </tr>
             <tr>
-                <td colSpan="2" style={{fontSize: "0.8em"}}>Please note: This will only work on browsers released later than 2015.<br/>If your browser is older, this isn't guaranteed to work.</td>
+                <td colSpan="2" style={{fontSize: "0.8em"}}>Please note: This will only work on browsers released later than 2015. 
+                    If your browser is older, this isn't guaranteed to work.</td>
             </tr>
             </tbody>
         </table>
-        <div>
+        <a name="avatars" />
+        <div className="avis-ctr">
             <strong>Avatars:</strong> {
                 state
                     .avatars
@@ -93,14 +147,18 @@ const Outfits = () => {
                 }
         </div>
         <div>
+            <Room key="room-ctr" products={state.room[0]} />
+        </div>
+        <div>
             {state
                 .avatars
                 .sort((a, b) => {
                     let fa = a.avatarname.toLowerCase(), fb = b.avatarname.toLowerCase()
                     return (fa < fb) ? -1 : (fb < fa) ? 1 : 0
                 })
+                
                 .map((avi) => (
-                    <Avatar key={avi.id} avatar={avi} apHidden={state.apHidden} />
+                    <Avatar key={'avi-' + avi.id} avatar={avi} apHidden={state.apHidden} />
                 ))
             }
         </div>

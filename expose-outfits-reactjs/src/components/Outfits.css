@@ -6,6 +6,12 @@
     padding: 10px;
 }
 
+.avis-ctr {
+    border: solid 1px lightgoldenrodyellow;
+    background-color: black;
+    padding: 15px;
+}
+
 a.avis {
     margin-left: 3px;
     margin-right: 3px;

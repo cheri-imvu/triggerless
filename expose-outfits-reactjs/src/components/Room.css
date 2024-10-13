@@ -10,4 +10,10 @@
     font-size: 1.4em;
     color: powderblue;
     background-color: #222222;
+    vertical-align: top;
+}
+
+.img-photo {
+    height: 110px;
+    width: auto;
 }

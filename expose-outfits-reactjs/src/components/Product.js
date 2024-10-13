@@ -13,12 +13,16 @@ const Product = (props) => {
     let prodUrl = `https://www.imvu.com/shop/product.php?products_id=${productId}`
     if (!isVisible) prodUrl = `https://www.imvu.com/shop/derivation_tree.php?products_id=${productId}`
 
-    let cnSplits = creatorName.split('_')
-    if (cnSplits.length > 1) {
-        creatorName = cnSplits[0] + ' [deleted]'
+    if (creatorName) {
+        let cnSplits = creatorName.split('_')
+        if (cnSplits.length > 1) {
+            creatorName = cnSplits[0] + ' [deleted]'
+        }
     }
+    else
+        creatorName = 'Unknown'
 
-    let apButton = rating === 'AP' ? (<span class="ap">AP</span>) : (<></>)
+    let apButton = rating === 'AP' ? (<span className="ap">AP</span>) : (<></>)
     let jsx = (
         <div className='product-ctr'>
             <div>
@@ -37,7 +41,7 @@ const Product = (props) => {
     )
 
     if (!apHidden) return jsx
-    let rxVB = /vb|voice|loud|scream|noise|sound/ig
+    let rxVB = /vb|voice|loud|scream|noise|sound|box/ig
     if (rating === "AP" || !isVisible || rxVB.test(productName)) return jsx
     return (<></>)
 }

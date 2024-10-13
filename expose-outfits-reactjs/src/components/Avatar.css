@@ -22,5 +22,10 @@
     display: inline-block;
     vertical-align: top;
     margin-right: 10px;
-    display: inline-block;
+    height: 110px;
+}
+
+.av-point-up {
+    vertical-align: top;
+    margin-top: 10px;
 }

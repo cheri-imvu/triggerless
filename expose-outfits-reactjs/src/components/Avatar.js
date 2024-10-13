@@ -10,17 +10,20 @@ const Avatar = (props) => {
     return (
         <div className="av-ctr">
             <div>
+                <a href="#avatars">
+                    <img className='av-point-up' src="point-up.png" alt='Jump to Top' />
+                </a>
                 <div className="av-name">{name}
                     <a name={name} />
                 </div>
 
                 <div className="av-photo">
                     <a target="_blank" rel="noreferrer" href={"https://avatars.imvu.com/" + name} >
-                    <img src={photo} className="img-photo" style={{height: "110px"}} alt={'image of ' + name}/>
+                    <img src={photo} className="img-photo" alt={'image of ' + name}/>
                     </a>
                 </div>
                 {products.map((prod) => (
-                    <Product key={prod.product_id} product={prod} apHidden={apHidden} />
+                    <Product key={'prod-' + prod.product_id} product={prod} apHidden={apHidden} />
                 ))}
 
             </div>
