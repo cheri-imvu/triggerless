@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using log4net;
 using Newtonsoft.Json;
 using NVorbis;
@@ -120,7 +121,7 @@ namespace Triggerless.Services.Server
             return result;
         }
 
-        public SongInfo GetSongInfo(int pid)
+        public async Task<SongInfo> GetSongInfo(int pid)
         {
             var dtStart = DateTime.Now;
 
@@ -129,7 +130,7 @@ namespace Triggerless.Services.Server
             SongInfo result = new SongInfo() { ProductID = pid };
             var contentsUrl = RipService.GetUrl(pid, "_contents.json");
             var indexUrl = RipService.GetUrl(pid, "index.xml");
-            ProductList productList;
+            ProductContentList productList;
             Template template = null;
 
             // Populate productList and template
@@ -138,12 +139,12 @@ namespace Triggerless.Services.Server
 
                 // Get the Product list
                 _log?.Debug($"\tAcquiring contents");
-                var responseJson = client.GetStringAsync(contentsUrl).Result;
+                var responseJson = await client.GetStringAsync(contentsUrl);
 
                 // cast into JSON we can deserialize
                 var json = $"{{productArray: {responseJson}}}";
                 _log?.Debug($"\tDeserializing product list");
-                productList = JsonConvert.DeserializeObject<ProductList>(json);
+                productList = JsonConvert.DeserializeObject<ProductContentList>(json);
 
                 // remove any non-OGG assets
                 _log?.Debug($"\tRemoving non-OGG assets");
@@ -157,7 +158,7 @@ namespace Triggerless.Services.Server
 
                 // Get index.xml template, and deserialize using XAFLib Template class
                 _log?.Debug($"\tAcquiring index.xml");
-                var responseText = client.GetStringAsync(indexUrl).Result;
+                var responseText = await client.GetStringAsync(indexUrl);
                 _log?.Debug($"\tLoading Template");
                 try
                 {

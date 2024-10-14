@@ -33,6 +33,7 @@ namespace Triggerless.API.Controllers
         {
             return GetJsonResponseFromObject(await GetProducts(p));
         }
+
         public async Task<ImvuProductList> GetProducts(long[] p)
         {
             using (var client = new ImvuApiClient())
@@ -40,6 +41,16 @@ namespace Triggerless.API.Controllers
                 return await client.GetProducts(p);
             }
             
+        }
+
+        [HttpGet, Route("api/productsounds/{p}")]
+        public async Task<HttpResponseMessage> ProductSounds([FromUri] long p)
+        {
+            using (var client = new ImvuApiClient())
+            {
+                var result = await client.GetProductSoundTriggerPayload(p);
+                return GetJsonResponseFromObject(result);
+            }
         }
 
         [HttpPost, Route("api/outfits")]

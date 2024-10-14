@@ -24,7 +24,7 @@ namespace Triggerless.Tests
             var json = $"{{productArray: {responseJson}}}";
 
 
-            var list = JsonConvert.DeserializeObject<ProductList>(json);
+            var list = JsonConvert.DeserializeObject<ProductContentList>(json);
             Console.WriteLine(list.productArray.Length);
 
         }

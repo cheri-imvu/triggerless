@@ -55,7 +55,8 @@
     <Compile Include="ImvuUser.cs" />
     <Compile Include="LogConversation.cs" />
     <Compile Include="PrivateMessage.cs" />
-    <Compile Include="ProductList.cs" />
+    <Compile Include="ProductContentList.cs" />
+    <Compile Include="ProductSoundTrigger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RipCountEntry.cs" />
     <Compile Include="SongInfo.cs" />

@@ -37,3 +37,19 @@ a.avis:hover {
     background-color: black;
     text-decoration: underline;
 } 
+
+.shill-box {
+    display: inline-block;
+    max-width: 350px;
+    vertical-align: middle;
+    padding-left: 10px;
+    padding-right: 20px;
+    font-size: 1.0em;
+}
+
+.shill-ctr {
+    background-color: black;
+    margin-top: 20px;
+    border: solid 2px yellow;
+    width: 100%;
+}

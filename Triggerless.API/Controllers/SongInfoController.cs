@@ -18,6 +18,8 @@ namespace Triggerless.API.Controllers
         [Route("api/SongInfo/{pid}"), HttpGet]
         public HttpResponseMessage SongInfo(int pid)
         {
+            throw new NotImplementedException();
+            /*
             _log?.Debug($"GET api/SongInfo/{pid} start");
             try
             {
@@ -32,11 +34,14 @@ namespace Triggerless.API.Controllers
                         { Success = false, ProductID = pid, Message = exc.Message })
                     };
             }
+            */
         }
 
         [Route("api/SongLength/{pid}/{location}"), HttpGet]
         public HttpResponseMessage SongLength(int pid, string location)
         {
+            throw new NotImplementedException();
+            /*
             try
             {
                 var result = new NVorbisService(_log).GetLength(pid, location);
@@ -47,6 +52,7 @@ namespace Triggerless.API.Controllers
             {
                 return new HttpResponseMessage(HttpStatusCode.InternalServerError) { Content = new StringContent($"{exc.Message}\n{exc.StackTrace}") };
             }
+            */
         }
 
 

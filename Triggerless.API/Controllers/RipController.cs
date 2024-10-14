@@ -127,11 +127,11 @@ namespace Triggerless.API.Controllers
                 var responseJson = await client.GetStringAsync(url);
                 var json = $"{{productArray: {responseJson}}}";
 
-                var list = JsonConvert.DeserializeObject<ProductList>(json);
+                var list = JsonConvert.DeserializeObject<ProductContentList>(json);
                 target = Path.Combine(target, pid.ToString());
                 if (!Directory.Exists(target)) Directory.CreateDirectory(target);
 
-                foreach (ProductItem item in list.productArray)
+                foreach (ProductContentItem item in list.productArray)
                 {
 
                     url = string.Format(urlTemplate, item.url ?? item.name);
@@ -147,7 +147,7 @@ namespace Triggerless.API.Controllers
                 {
                     using (ZipArchive za = new ZipArchive(fs, ZipArchiveMode.Create, false))
                     {
-                        foreach (ProductItem item in list.productArray)
+                        foreach (ProductContentItem item in list.productArray)
                         {
                             var itemPath = Path.Combine(target, item.name);
                             za.CreateEntryFromFile(itemPath, item.name, CompressionLevel.Fastest);

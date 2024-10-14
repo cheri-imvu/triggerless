@@ -17,9 +17,9 @@ namespace Triggerless.Services.Server
         {
             _log = log;
         }
-        public static string GetUrlTemplate(int pid) => $"https://userimages-akm.imvu.com/productdata/{pid}/1/{{0}}";
+        public static string GetUrlTemplate(long pid) => $"https://userimages-akm.imvu.com/productdata/{pid}/1/{{0}}";
 
-        public static string GetUrl(int pid, string filename) => string.Format(GetUrlTemplate(pid), filename);
+        public static string GetUrl(long pid, string filename) => string.Format(GetUrlTemplate(pid), filename);
 
     }
 }

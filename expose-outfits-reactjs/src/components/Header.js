@@ -8,7 +8,7 @@ const Header = (props) => {
                 </a>
             </div>
             <h2 style={headingStyle}>{props.title}</h2>
-            <div>The fastest, most reliable IMVU Outfit Viewer on the Internet!</div>
+            <div style={{fontSize: '1.3em', color: 'yellow', backgroundColor: 'black'}}>The fastest, most reliable IMVU Outfit Viewer on the Internet!</div>
         </>
     )
 }

@@ -1,14 +1,18 @@
 ﻿using log4net;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Triggerless.Models;
+using static Triggerless.Services.Server.NVorbisService;
+using Triggerless.XAFLib;
 
 
 
@@ -240,7 +244,6 @@ namespace Triggerless.Services.Server
             return ConvoResponse.FromJson(await GetConversationsJson());
         }
 
-
         public void Dispose()
         {
             _service?.Dispose();
@@ -296,6 +299,88 @@ namespace Triggerless.Services.Server
                 Products = (await GetProductsExt(entry.ProductIds)).Products
             };
         }
+
+        public async Task<ProductSoundTriggerPayload> GetProductSoundTriggerPayload(long pid)
+        {
+            var result = new ProductSoundTriggerPayload();
+            var product = await GetProduct(pid);
+            result.CreatorName = product.CreatorName;
+            result.ProductId = product.Id;
+            result.ProductName = product.Name;
+            result.ImageLocation = product.ProductImage;
+            result.Triggers = (await GetProductSoundTriggerList(pid)).ToArray();
+
+            return result;
+        }
+
+        private async Task<List<ProductSoundTrigger>> GetProductSoundTriggerList(long pid)
+        {
+            var dtStart = DateTime.Now;
+
+            // Initialize variables
+            var result = new List<ProductSoundTrigger>();
+            var contentsUrl = RipService.GetUrl(pid, "_contents.json");
+            var indexUrl = RipService.GetUrl(pid, "index.xml");
+            ProductContentList productList;
+            Template template = null;
+
+            // Populate productList and template
+            using (var client = new HttpClient())
+            {
+
+                // Get the Product list
+                _log?.Debug($"\tAcquiring contents");
+                var responseJson = await client.GetStringAsync(contentsUrl);
+
+                // cast into JSON we can deserialize
+                var json = $"{{productArray: {responseJson}}}";
+                _log?.Debug($"\tDeserializing product list");
+                productList = JsonConvert.DeserializeObject<ProductContentList>(json);
+
+                // remove any non-OGG assets
+                _log?.Debug($"\tRemoving non-OGG assets");
+                productList.productArray = productList.productArray.Where(p => p.name.ToLower().EndsWith(".ogg")).ToArray();
+
+                // in cases where url is omitted, we would use name instead. Here we'll just populate null urls for ease of use
+                foreach (var item in productList.productArray.Where(i => i.url == null))
+                {
+                    item.url = item.name;
+                }
+
+                // Get index.xml template, and deserialize using XAFLib Template class
+                _log?.Debug($"\tAcquiring index.xml");
+                var responseText = await client.GetStringAsync(indexUrl);
+                _log?.Debug($"\tLoading Template");
+                try
+                {
+                    template = Template.LoadXml(responseText);
+                }
+                catch (Exception exc)
+                {
+                    _log?.Error("Unable to load template", exc);
+                }
+            }
+
+            // Start populating the entries in our result
+            foreach (var action in template?.Actions)
+            {
+                // Here, name is the name of the OGG file
+                var name = action.Sound?.Name;
+                if (string.IsNullOrWhiteSpace(name)) continue;
+
+                // Create our initial entry and add it to the result entries
+                var entry = new ProductSoundTrigger();
+                entry.Trigger = action.Name;
+                var location = productList.productArray.Where(e => e.name == name).Select(e => e.url).First();
+                if (String.IsNullOrWhiteSpace(location)) continue;
+                entry.Location = RipService.GetUrl(pid, location);
+                result.Add(entry);
+            }
+            _log?.Debug($"\t{template.Actions.Count} triggers cued up.");
+
+            return result;
+        }
+
     }
 }
 

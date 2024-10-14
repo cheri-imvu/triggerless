@@ -114,16 +114,38 @@ const Outfits = () => {
             <tr>
                 <td>
                 <div style={{paddingLeft: "25px"}}>
-                    <textarea id="webLink" style={{width: "500px", height: "200px"}} placeholder="Paste web link here"></textarea>
+                    <textarea id="webLink" style={{width: "600px", height: "200px"}} placeholder="Paste web link here"></textarea>
                 </div>
-                <div style={{paddingLeft: "25px"}}>
+                <div style={{paddingLeft: "25px", marginBottom: '15px'}}>
                     <input type="checkbox" id="apHidden" onChange={processLink} />
                     <label htmlFor="apHidden">AP, VBs &amp; Hidden Only</label>
                 </div>
                 </td>
-                <td>
+                <td style={{textAlign: 'left'}}>
                 <div><button className="outfits-btn" onClick={processLink}>Expose</button></div>
                 <div><button className="outfits-btn" onClick={clearLink}>Clear</button></div>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td className="shill-ctr" colSpan={3}>
+                    <a name="avatars" />
+                    <div className="shill-box">If you enjoy using this hidden IMVU outfit viewer, why not consider making a donation? 
+                        Buy me a cup of coffee ($2.00) and continue using this viewer as long as you like. Click the coffee to donate.</div>
+                    <div className="shill-box">
+                        <a href="https://www.imvu.com/shop/product.php?products_id=69124201" target='_blank' title="Donate Now">
+                            <img src="https://webasset-akm.imvu.com/resized_image/dproductdata/tmaintain_aspect_ratio/i%2Fproductdata%2Fimages_830006af8f5f1b74e861cd2d2accb591.jpg?width=100&height=80" 
+                            alt="Donate Now" title='Donate Now' />
+                        </a> 
+                    </div>
+                    <div className="shill-box" style={{maxWidth: 400}}>
+                        
+                        <ul style={{textAlign: 'left'}}>30 avatars / 1026 products:
+                            <li>Triggerless: 7 secs, shows AP &amp; Hidden</li>
+                            <li>IMVUKSA: 1:30 min, no AP or Hidden</li>
+                            <li>All others: Offline or monthly fee</li>
+                        </ul>
+                    </div>
                 </td>
             </tr>
             <tr>
@@ -132,7 +154,6 @@ const Outfits = () => {
             </tr>
             </tbody>
         </table>
-        <a name="avatars" />
         <div className="avis-ctr">
             <strong>Avatars:</strong> {
                 state

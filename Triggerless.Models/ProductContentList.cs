@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 namespace Triggerless.Models
 {
     // ReSharper disable once ClassNeverInstantiated.Local
-    public class ProductList
+    public class ProductContentList
     {
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
-        public ProductItem[] productArray { get; set; }
+        public ProductContentItem[] productArray { get; set; }
     }
 
     // ReSharper disable once ClassNeverInstantiated.Local
-    public class ProductItem
+    public class ProductContentItem
     {
         // ReSharper disable UnusedAutoPropertyAccessor.Local
         public string url { get; set; }
