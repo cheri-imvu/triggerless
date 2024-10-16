@@ -44,7 +44,8 @@ namespace Triggerless.XAFLib
             if (an != null)
             {
                 AssetName = an.InnerText;
-                EffectControls.LoadXml(node.SelectSingleNode("EffectControls"));
+                var childNode = node.SelectSingleNode("EffectControls"); 
+                if (childNode != null) EffectControls.LoadXml(childNode);
             }
         }
     }

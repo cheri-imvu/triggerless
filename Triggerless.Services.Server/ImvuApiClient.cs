@@ -13,6 +13,11 @@ using System.Threading.Tasks;
 using Triggerless.Models;
 using static Triggerless.Services.Server.NVorbisService;
 using Triggerless.XAFLib;
+using System.Web.Caching;
+using System.Security.Cryptography;
+using System.Web.UI;
+using System.Windows.Navigation;
+using System.Collections;
 
 
 
@@ -155,7 +160,6 @@ namespace Triggerless.Services.Server
             }
         }
 
-
         public async Task<ImvuProductList> GetProductsExt(IEnumerable<long> productIds)
         {
             var result = new ImvuProductList();
@@ -191,9 +195,9 @@ namespace Triggerless.Services.Server
 
 
             var list = new ConcurrentBag<ImvuProduct>();
-            foreach (var productId in p)
+            foreach (var currentProductId in p)
             {
-                list.Add(await GetProduct(productId));
+                list.Add(await GetProduct(currentProductId));
             }
             result.Products = list.ToArray();
             return result;
@@ -303,24 +307,72 @@ namespace Triggerless.Services.Server
         public async Task<ProductSoundTriggerPayload> GetProductSoundTriggerPayload(long pid)
         {
             var result = new ProductSoundTriggerPayload();
+            var triggerList = new List<ProductSoundTrigger>();
+
             var product = await GetProduct(pid);
             result.CreatorName = product.CreatorName;
             result.ProductId = product.Id;
             result.ProductName = product.Name;
             result.ImageLocation = product.ProductImage;
-            result.Triggers = (await GetProductSoundTriggerList(pid)).ToArray();
 
+            // Start with the product of interest
+
+            var currentProductId = pid;
+            var stopPids = new long[] { 
+                80,          // IMVU Female Avatar
+                191,         // IMVU Male Avatar
+                0, -1,
+                56816049,    // Empty Female Accessory
+                2191901,     // Empty Female Clothing
+                56919490,    // Empty Male Accessory
+                9911131,     // Empty Male Clothing 
+                669,         // Glasses King Gold
+                682,         // Glasses Spice Lagoon 
+                11638,       // Glasses 48s in X22
+            };
+
+            // Now we run up the derivation tree up to Female or Male Avatar base products.
+            // I've found that there are products that contain triggers at many levels of
+            // the derivation tree and this will catch all of them.
+
+            Debug.WriteLine($"Product Id: {currentProductId}");
+            while (!stopPids.Contains(currentProductId)) // base Female and Male Avatar product ids
+            {
+                try
+                {
+                    // Get triggers for current product
+                    var currentTriggerList = await GetProductSoundTriggerList(currentProductId);
+
+                    // Grab available triggers at this level
+                    // Some products have OGG files with no associated trigger, grrrr....
+                    triggerList.AddRange(currentTriggerList.Where(t => !String.IsNullOrWhiteSpace(t.Trigger) && !String.IsNullOrWhiteSpace(t.Location)));
+
+                    // Branch up the derivation tree one level
+                    currentProductId = currentTriggerList.ParentProductId;
+                    Debug.WriteLine($"Product Id: {currentProductId}");
+
+                }
+                catch (Exception ex)
+                {
+                    // If you try to GetProduct for one of the earliest IMVU products (such as Female Avatar)
+                    // the API will throw an exception. Just bail and accept there were no more triggers to be found.
+
+                    break;
+                }
+            }
+
+            triggerList.Sort(new SoundTriggerComparer());
+            result.Triggers = triggerList.ToArray();
             return result;
         }
 
-        private async Task<List<ProductSoundTrigger>> GetProductSoundTriggerList(long pid)
+        private async Task<ProductSoundTriggerList> GetProductSoundTriggerList(long pid)
         {
             var dtStart = DateTime.Now;
 
             // Initialize variables
-            var result = new List<ProductSoundTrigger>();
+            var result = new ProductSoundTriggerList();
             var contentsUrl = RipService.GetUrl(pid, "_contents.json");
-            var indexUrl = RipService.GetUrl(pid, "index.xml");
             ProductContentList productList;
             Template template = null;
 
@@ -347,20 +399,15 @@ namespace Triggerless.Services.Server
                     item.url = item.name;
                 }
 
-                // Get index.xml template, and deserialize using XAFLib Template class
-                _log?.Debug($"\tAcquiring index.xml");
-                var responseText = await client.GetStringAsync(indexUrl);
-                _log?.Debug($"\tLoading Template");
-                try
-                {
-                    template = Template.LoadXml(responseText);
-                }
-                catch (Exception exc)
-                {
-                    _log?.Error("Unable to load template", exc);
-                }
+                template = await GetTemplate(pid);
             }
 
+            if (template == null)
+            {
+                return new ProductSoundTriggerList();
+            }
+
+            result.ParentProductId = template.ParentProductID;
             // Start populating the entries in our result
             foreach (var action in template?.Actions)
             {
@@ -371,13 +418,44 @@ namespace Triggerless.Services.Server
                 // Create our initial entry and add it to the result entries
                 var entry = new ProductSoundTrigger();
                 entry.Trigger = action.Name;
-                var location = productList.productArray.Where(e => e.name == name).Select(e => e.url).First();
-                if (String.IsNullOrWhiteSpace(location)) continue;
-                entry.Location = RipService.GetUrl(pid, location);
-                result.Add(entry);
+                if (productList.productArray != null && productList.productArray.Length > 0)
+                {
+                    var location = productList.productArray.Where(e => e.name == name).Select(e => e.url).First();
+                    if (String.IsNullOrWhiteSpace(location)) continue;
+                    entry.Location = RipService.GetUrl(pid, location).Replace(" ", "+");
+                    result.Add(entry);
+                }
             }
             _log?.Debug($"\t{template.Actions.Count} triggers cued up.");
 
+            return result;
+        }
+
+        public async Task<Template> GetTemplate(long productId)
+        {
+            Template result = null;
+            // Get index.xml template, and deserialize using XAFLib Template class
+            _log?.Debug($"\tAcquiring index.xml");
+            var indexUrl = RipService.GetUrl(productId, "index.xml");
+
+            using (var client = new HttpClient())
+            {
+                var responseText = await client.GetStringAsync(indexUrl);
+                _log?.Debug($"\tLoading Template");
+                try
+                {
+                    result = Template.LoadXml(responseText);
+                }
+                catch (Exception exc)
+                {
+                    // This happens when you get a template that has no content and 
+                    // doesn't connect to anything
+                    // Just send back an empty template with ParentProductId = 80
+
+                    _log?.Error("Unable to load template", exc);
+                    return new Template { ParentProductID = 80 };
+                }
+            }
             return result;
         }
 

@@ -79,7 +79,12 @@ namespace Triggerless.Services.Server
             {
                 var user = await apiClient.GetUserByName(result.CreatorName);
                 result.CreatorId = user.Id;
+
+                var template = await apiClient.GetTemplate(productId);
+                result.ParentId = template.ParentProductID;
             }
+
+
 
 
 

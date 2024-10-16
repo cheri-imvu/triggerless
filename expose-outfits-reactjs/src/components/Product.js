@@ -13,6 +13,20 @@ const Product = (props) => {
     let prodUrl = `https://www.imvu.com/shop/product.php?products_id=${productId}`
     if (!isVisible) prodUrl = `https://www.imvu.com/shop/derivation_tree.php?products_id=${productId}`
 
+    let rxVB = /vb|voice|loud|scream|noise|sound|box|chat|effect|grito/ig
+    let isLikelyVB = rxVB.test(productName)
+
+    const showTriggers = async (e) => {
+        console.log(e)
+        let productId = e.target.id.replace('lips-', '')
+        let urlPart = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080/'
+        const productsResponse = await fetch(`${urlPart}productsounds.php?pid=${productId}`);
+        const productsData = await productsResponse.json();
+        console.log(productsData)
+
+        alert(`"Play Triggers" new feature coming soon. You clicked Product ID ${productId}, which has ${productsData.Triggers.length} triggers`)
+    }
+
     if (creatorName) {
         let cnSplits = creatorName.split('_')
         if (cnSplits.length > 1) {
@@ -23,6 +37,7 @@ const Product = (props) => {
         creatorName = 'Unknown'
 
     let apButton = rating === 'AP' ? (<span className="ap">AP</span>) : (<></>)
+    let lips = isLikelyVB ? (<img id={'lips-' + productId} className='lips' src="lips.png" onClick={showTriggers}/>) : (<></>)
     let jsx = (
         <div className='product-ctr'>
             <div>
@@ -36,13 +51,13 @@ const Product = (props) => {
                 <a rel="noreferrer" target="_blank" href={prodUrl}>
                 <img src={productImage} alt={productName + " by " + creatorName} />
                 </a>
+                {lips}
             </div>
         </div>
     )
 
     if (!apHidden) return jsx
-    let rxVB = /vb|voice|loud|scream|noise|sound|box/ig
-    if (rating === "AP" || !isVisible || rxVB.test(productName)) return jsx
+    if (rating === "AP" || !isVisible || isLikelyVB) return jsx
     return (<></>)
 }
 
