@@ -72,6 +72,17 @@ namespace Triggerless.API.Controllers
                 return await client.GetOutfit(req);
             }
         }
+
+        [HttpGet, Route("api/product/template/{p}")]
+        public async Task<HttpResponseMessage> GetTemplate([FromUri] long p)
+        {
+            using (var client = new ImvuApiClient())
+            {
+                var result = await client.GetTemplate(p);
+                return GetJsonResponseFromObject(result);
+            }
+        }
+
     }
 }
 
