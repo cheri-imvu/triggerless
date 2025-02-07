@@ -19,7 +19,7 @@ namespace Triggerless.Tests
             var pid = 45010057;
             var location = "7eec5d2a729f4539fdfd78542f61ef7b.ogg";
             var length = new NVorbisService(null).GetLength(pid, location);
-            Assert.IsTrue(length != 0);
+            Assert.That(length != 0);
             Console.WriteLine($"Song is {length} ms long");
         }
 

@@ -352,7 +352,7 @@ namespace Triggerless.Services.Server
                     Debug.WriteLine($"Product Id: {currentProductId}");
 
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // If you try to GetProduct for one of the earliest IMVU products (such as Female Avatar)
                     // the API will throw an exception. Just bail and accept there were no more triggers to be found.

@@ -18,7 +18,7 @@ namespace Triggerless.Tests
             var uc = new UserController();
             var user = await uc.GetUser(DIAMOND_BONES_ID);
             user.Dump();
-            Assert.AreEqual("DiamondBones", user.AvatarName);
+            Assert.That("DiamondBones" == user.AvatarName);
         }
     }
 }

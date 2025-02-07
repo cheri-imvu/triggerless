@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -23,6 +24,14 @@ namespace Triggerless.API.Controllers
             get
             {
                 return (ConfigurationManager.AppSettings["allowedIPs"]);
+            }
+        }
+
+        public virtual string DeniedIPs
+        {
+            get
+            {
+                return (ConfigurationManager.AppSettings["deniedIPs"]);
             }
         }
 
@@ -50,13 +59,25 @@ namespace Triggerless.API.Controllers
             HttpResponseMessage response;
             string ipAddress = RemoteIP;
 
+            // Denied IPs are always denied, regardless of RestrictIPs
+
+            char[] semi = ";".ToCharArray();
+            var deniedAddresses = DeniedIPs.Split(semi, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray();
+            var deniedMessage = new HttpResponseMessage(HttpStatusCode.Forbidden)
+                { Content = new StringContent("Access Denied to '{ipAddress}'. Contact avatar @Triggers to negotiate an access fee.") };
+            if (deniedAddresses.Contains(ipAddress))
+            {
+                return deniedMessage;
+            }
+
+
             if (RestrictIPs)
             {
-
-                var ipAddresses = AllowedIPs.Split(';');
+                var allowedAddresses = AllowedIPs.Split(semi, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray();
                 bool allowed = false;
 
-                foreach (var ip in ipAddresses)
+
+                foreach (var ip in allowedAddresses)
                 {
                     if (ip.EndsWith("*"))
                     {
@@ -75,16 +96,7 @@ namespace Triggerless.API.Controllers
 
                 if (!allowed)
                 {
-                    var sb = new StringBuilder();
-                    foreach (var ip in ipAddresses)
-                    {
-                        //sb.AppendLine($"Allowed: '{ip}'");
-                    }
-                    sb.AppendLine($"Access Denied to '{ipAddress}'");
-
-
-                    response = new HttpResponseMessage(HttpStatusCode.Forbidden) { Content = new StringContent(sb.ToString()) };
-                    return response;
+                    return deniedMessage;
                 }
             }
 

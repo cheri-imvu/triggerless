@@ -17,7 +17,7 @@ namespace Triggerless.Tests
         {
             var reader = new FileReader();
             var convo = reader.ReadFile(@"D:\DEV\CS\Triggerless\Triggerless.Tests\imvu-logs\IMVULog.log.2");
-            Assert.IsNotNull(convo);
+            Assert.That(convo != null);
             Assert.That(convo.Events.Any(e => e.Text != null));
 
         }
@@ -29,7 +29,7 @@ namespace Triggerless.Tests
             var convo = reader.Read();
             Assert.That(convo.Events.Count > 700, "Fewer than 700 events were generated");
             Console.WriteLine(convo.Events[0].Time);
-            Assert.IsFalse(convo.Events.Any(e => e.Author.AvatarName == null), "At least one null Author AvatarName was detected");
+            Assert.That(!convo.Events.Any(e => e.Author.AvatarName == null), "At least one null Author AvatarName was detected");
         }
 
         [Test]

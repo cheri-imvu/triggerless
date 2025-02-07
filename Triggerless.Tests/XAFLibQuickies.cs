@@ -52,7 +52,7 @@ namespace Triggerless.Tests
             var path = @"D:\DEV\Accessorie\Rips\lush-60";
             var xaflistfile = @"D:\temp\xaflist.txt";
             var lines = File.ReadAllLines(xaflistfile);
-            foreach(string line in lines)
+            foreach (string line in lines)
             {
                 var assetName = line.Split('\t')[1].ToLower();
 
@@ -61,7 +61,7 @@ namespace Triggerless.Tests
                 var anim = xaf.LoadBinary(filename.Replace(".xaf", ".caf"));
                 Console.Write(filename);
                 xaf.Save(filename, anim);
-                
+
             }
         }
 
@@ -120,7 +120,7 @@ namespace Triggerless.Tests
             {
                 Console.WriteLine(entry.ToString());
             }
-            
+
         }
 
         private class HeadBobTrigger
@@ -312,7 +312,7 @@ namespace Triggerless.Tests
             Assert.That(morphAnim.Tracks.Count == 3, "Wrong number of tracks");
             //Assert.That(morphAnim.Tracks[0].KeyFrames.Count == 20, "Wrong number of frames");
             float time = -1;
-            foreach(var frame in morphAnim.Tracks[1].KeyFrames)
+            foreach (var frame in morphAnim.Tracks[1].KeyFrames)
             {
                 Assert.That(frame.Time >= time, "Frames out of order");
                 time = frame.Time;
@@ -321,6 +321,19 @@ namespace Triggerless.Tests
             morphAnim.WriteXml(@"D:\DEV\Accessorie\Products\PoseAction\Speak\ready.xpf");
 
 
+        }
+
+        [Test]
+        public void ConvertCAFTOXAF()
+        {
+            var folder = @"C:\Users\crack\Downloads\twerk-13813998";
+            var XAFFile = new XAFFile();
+            foreach (var file in Directory.EnumerateFiles(folder, "*.xaf")) {
+                var anim = XAFFile.LoadBinary(file);
+                File.Move(file, file.Replace(".xaf",".caf"));
+                anim.Save(file);
+
+            }
         }
 
     }

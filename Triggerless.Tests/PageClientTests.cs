@@ -31,11 +31,11 @@ namespace Triggerless.Tests
         public async Task GetHiddenProduct()
         {
             var product = await _client.GetHiddenProduct(PRoDUCT_ID);
-            Assert.IsNotNull(product);
-            Assert.IsNotNull(product.Name);
-            Assert.IsNotNull(product.CreatorName);
-            Assert.IsNotNull(product.ProductImage);
-            Assert.IsFalse(product.IsVisible);
+            Assert.That(product != null);
+            Assert.That(product.Name != null);
+            Assert.That(product.CreatorName != null);
+            Assert.That(product.ProductImage != null);
+            Assert.That(!product.IsVisible);
             Assert.That(product.CreatorId  != 0, "CreatorId came back 0");  // still have to fulfill
         }
     }

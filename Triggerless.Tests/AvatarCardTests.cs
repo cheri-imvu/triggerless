@@ -45,9 +45,9 @@ namespace Triggerless.Tests
             }
 
             AvCard result;
-            Assert.IsTrue(AvCard.TryParse(json, out result));
-            Assert.AreEqual("Cheri", result.Name);
-            Assert.AreEqual(4, result.PublicRooms.Count);
+            Assert.That(AvCard.TryParse(json, out result));
+            Assert.Equals("Cheri", result.Name);
+            Assert.Equals(4, result.PublicRooms.Count);
             Assert.That(result.BadgeLayout.Count > 50);
         }
     }

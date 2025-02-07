@@ -36,7 +36,7 @@ namespace Triggerless.Tests
         [Test]
         public void Init()
         {
-            Assert.IsNotNull(_store);
+            Assert.That(_store != null);
         }
 
         [Test]

@@ -20,8 +20,8 @@ namespace Triggerless.Tests
             var userId = 82044182L;
             var client = new TriggerlessApiClient();
             var user = await client.GetUser(userId);
-            Assert.IsNotNull(user);
-            Assert.IsNotNull(user.AvatarName);
+            Assert.That(user != null);
+            Assert.That (user.AvatarName != null);
 
         }
     }

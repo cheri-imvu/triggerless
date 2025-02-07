@@ -36,7 +36,7 @@ namespace Triggerless.Tests
         public async Task UserSingle()
         {
             var user = await _client.GetUser(USER_ID);
-            Assert.IsNotNull(user, "null");
+            Assert.That(user != null, "null");
             Assert.That(user.AvatarName.ToLower().Contains("p0ppy"), "not p0ppy");
         } 
 
@@ -44,7 +44,7 @@ namespace Triggerless.Tests
         public async Task ProductSingle()
         {
             var product = await _client.GetProduct(PRoDUCT_ID);
-            Assert.IsNotNull(product, "null");
+            Assert.That(product != null, "null");
             Assert.That(product.Name.ToLower().Contains("timb"), "not timb");
 
         }
@@ -54,9 +54,9 @@ namespace Triggerless.Tests
         {
             var pids = new long[] { 10599277, 52874386, 52874314, 52797258, 52459235, 52439278, 52439111 };
             var products = await _client.GetProducts(pids);
-            Assert.IsNotNull(products);
-            Assert.AreEqual(pids.Length, products.Products.Count());
-            Assert.AreEqual(pids.Length, products.Products.Count(p => p.Status == "success"));
+            Assert.That(products != null);
+            Assert.That(pids.Length == products.Products.Count());
+            Assert.That(pids.Length == products.Products.Count(p => p.Status == "success"));
         }
 
         [Test]
@@ -64,10 +64,10 @@ namespace Triggerless.Tests
         {
             long hiddenProductID = 41967L; // Ankh Collar
             var product = await _client.GetProduct(hiddenProductID);
-            Assert.IsNotNull(product);
-            Assert.IsNotNull(product.Name);
-            Assert.IsNotNull(product.CreatorName);
-            Assert.IsNotNull(product.ProductImage);
+            Assert.That(product != null);
+            Assert.That(product.Name != null);
+            Assert.That(product.CreatorName != null);
+            Assert.That(product.ProductImage != null);
             Assert.That(product.CreatorId > 0);
         }
 
@@ -75,8 +75,8 @@ namespace Triggerless.Tests
         public async Task GetAvatarCardById()
         {
             var json = await _client.GetAvatarCardJson($"25522141");
-            Assert.IsNotNull(json);
-            Assert.IsNotNull(JObject.Parse(json));
+            Assert.That(json != null);
+            Assert.That(JObject.Parse(json) != null);
             Console.WriteLine(json);
         }
 
@@ -84,8 +84,8 @@ namespace Triggerless.Tests
         public async Task GetAvatarCardByName()
         {
             var json = await _client.GetAvatarCardJson($"DJSher");
-            Assert.IsNotNull(json);
-            Assert.IsNotNull(JObject.Parse(json));
+            Assert.That(json != null);
+            Assert.That(JObject.Parse(json) != null);
             Console.WriteLine(json);
         }
 
@@ -93,8 +93,8 @@ namespace Triggerless.Tests
         public async Task GetAvatarCardBadId()
         {
             var json = await _client.GetAvatarCardJson($"255221410000");
-            Assert.IsNotNull(json);
-            Assert.IsNotNull(JObject.Parse(json));
+            Assert.That(json != null);
+            Assert.That(JObject.Parse(json) != null);
             object o = JsonConvert.DeserializeObject(json);
 
             Assert.That(condition: o.GetType()
@@ -116,8 +116,8 @@ namespace Triggerless.Tests
         public async Task GetAvatarCardBadName()
         {
             var json = await _client.GetAvatarCardJson($"xxPresidentHillaryClintonxx");
-            Assert.IsNotNull(json);
-            Assert.IsNotNull(JObject.Parse(json));
+            Assert.That(json != null);
+            Assert.That(JObject.Parse(json) != null);
             object o = JsonConvert.DeserializeObject(json);
 
             Assert.That(condition: o.GetType()
@@ -146,7 +146,7 @@ namespace Triggerless.Tests
         public async Task GetConvoResponse()
         {
             var resp = await _client.ConversationResponse();
-            Assert.IsTrue(resp != null);
+            Assert.That(resp != null);
             Assert.That(resp.Conversations.Count > 10);
             Console.WriteLine($"{resp.Conversations.Count} conversations");
 
@@ -158,11 +158,11 @@ namespace Triggerless.Tests
             var req = new ExposeOutfitsRequest();
             req.Entries = GetExposeOutfitsRequest().Entries.Where(a => a.AvatarId != -1).Skip(40).Take(20).ToArray();
             var response = await _client.GetOutfits(req);
-            Assert.IsTrue(response != null);
-            Assert.IsTrue(response.Entries.Length == req.Entries.Length, $"Requested {req.Entries.Length}, Responded {response.Entries.Length}");
+            Assert.That(response != null);
+            Assert.That(response.Entries.Length == req.Entries.Length, $"Requested {req.Entries.Length}, Responded {response.Entries.Length}");
             Console.WriteLine($"Nice, {response.Entries.Length}");
             var lastEntry = response.Entries[response.Entries.Length - 1];
-            Assert.IsTrue(lastEntry.Products.Length > 0, $"Products missing, naked avatar {lastEntry.User.AvatarName}");
+            Assert.That(lastEntry.Products.Length > 0, $"Products missing, naked avatar {lastEntry.User.AvatarName}");
             Console.WriteLine($"Outfit for {lastEntry.User.AvatarName}");
             foreach (var product in lastEntry.Products)
             {
@@ -198,7 +198,7 @@ namespace Triggerless.Tests
                 var startTime = DateTimeOffset.Now;
                 var result = ImvuApiClient.RequestFromUrl(url);
                 //Console.WriteLine($"It took {(DateTimeOffset.Now - startTime).TotalMilliseconds} ms");
-                Assert.IsTrue(result.Entries.Length == 51, $"Entries, expected 51, found {result.Entries.Length}");
+                Assert.That(result.Entries.Length == 51, $"Entries, expected 51, found {result.Entries.Length}");
                 Console.Write(JsonConvert.SerializeObject(result));
             }
         }

@@ -25,8 +25,8 @@ namespace Triggerless.Tests
             var c = new ProductController();
             var list = new long[] { 10599276, 10599277, 10599278 };
             ImvuProductList result = await c.GetProducts(list);
-            Assert.AreEqual(list.Length, result.Products.Length);
-            Assert.IsTrue(result.Products.Any(p => p.CreatorName.Contains("_")));
+            Assert.That(list.Length == result.Products.Length);
+            Assert.That(result.Products.Any(p => p.CreatorName.Contains("_")));
             int numHits = result.Products.Count(p => p.Status == "success");
             Console.WriteLine(numHits);
         }
