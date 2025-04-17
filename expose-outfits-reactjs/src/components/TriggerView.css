@@ -1,0 +1,30 @@
+#triggerView {
+    position: absolute;
+    display: block;
+    border: solid 1px black;
+    background-color: darkolivegreen;
+    color: yellow;
+    width: 200px;
+    height: 300px;
+    left: 300px;
+    top: 1000px;
+    z-index: 20;
+    padding: 10px;
+    overflow-y: auto;
+    scrollbar-width: auto;
+    padding-bottom: 20px;
+    padding-top: 0px;
+}
+
+#trigger-ctr {
+    background-color: olive;
+    padding: 8px;
+}
+
+.trigger-x {
+    font-weight: bold;
+    font-size: 1.2em;
+    vertical-align: top;
+    padding-bottom: 12px;
+    cursor: pointer;
+}

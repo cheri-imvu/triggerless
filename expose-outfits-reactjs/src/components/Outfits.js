@@ -3,6 +3,7 @@ import Avatar from "./Avatar"
 import { useState } from 'react'
 import './Outfits.css'
 import Room from "./Room"
+import TriggerView from "./TriggerView"
 
 const Outfits = () => {
 
@@ -102,6 +103,8 @@ const Outfits = () => {
     return (
         <>
         <div>How to use this...</div>
+        <TriggerView></TriggerView>
+
         <ol>
             <li>In IMVU Client, right-click anywhere in the room, and select "View products in this scene".</li>
             <li>Your browser should pop up with a page. Usually, many of the outfits will be hidden.</li>

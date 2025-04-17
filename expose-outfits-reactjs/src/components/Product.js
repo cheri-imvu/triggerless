@@ -20,11 +20,12 @@ const Product = (props) => {
         console.log(e)
         let productId = e.target.id.replace('lips-', '')
         let urlPart = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080/'
-        const productsResponse = await fetch(`${urlPart}productsounds.php?pid=${productId}`);
+        const productsResponse = await fetch(`${urlPart}productsounds.php? pid=${productId}`);
         const productsData = await productsResponse.json();
+        productsData.pageX = e.pageX
+        productsData.pageY = e.pageY
         console.log(productsData)
-
-        alert(`"Play Triggers" new feature coming soon. You clicked Product ID ${productId}, which has ${productsData.Triggers.length} triggers`)
+        e.target.style.cursor = 'url(play.png)'
     }
 
     if (creatorName) {
