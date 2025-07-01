@@ -32,6 +32,12 @@ namespace Triggerless.API
             );
 
             config.Routes.MapHttpRoute(
+                name: "DiscordBotSendMessage",
+                routeTemplate: "api/bot/sendmessage",
+                defaults: new { controller = "DiscordBot", action = "SendMessage"}
+            );
+
+            config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }

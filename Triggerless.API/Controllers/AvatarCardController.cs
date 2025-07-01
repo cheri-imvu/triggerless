@@ -16,7 +16,6 @@ namespace Triggerless.API.Controllers
 
         public static readonly ILog _log = LogManager.GetLogger(nameof(AvatarCardController));
 
-        // GET api/<controller>/5
         [Route("api/avatarcard/{idOrName}")]
         public async Task<HttpResponseMessage> Get(string idOrName) {
             _log?.Debug($"Get api/avatarcard/{idOrName}");
