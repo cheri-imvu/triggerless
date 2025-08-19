@@ -235,7 +235,7 @@
     <Compile Include="Controllers\RipController.cs" />
     <Compile Include="Controllers\RipLogController.cs" />
     <Compile Include="Controllers\SongInfoController.cs" />
-    <Compile Include="Controllers\TechSupportController.cs" />
+    <Compile Include="Controllers\FileUploadController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">

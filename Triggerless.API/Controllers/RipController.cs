@@ -23,7 +23,7 @@ namespace Triggerless.API.Controllers
         {
             get
             {
-                return (ConfigurationManager.AppSettings["allowedIPs"]);
+                return (ConfigurationManager.AppSettings["allowedIPs"]) ?? String.Empty;
             }
         }
 
@@ -31,7 +31,7 @@ namespace Triggerless.API.Controllers
         {
             get
             {
-                return (ConfigurationManager.AppSettings["deniedIPs"]);
+                return (ConfigurationManager.AppSettings["deniedIPs"]) ?? String.Empty;
             }
         }
 
