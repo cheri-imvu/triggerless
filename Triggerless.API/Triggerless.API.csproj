@@ -225,10 +225,14 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AvatarCardController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\Cal3DConvertController.cs" />
     <Compile Include="Controllers\DiscordBotController.cs" />
+    <Compile Include="Controllers\LyricsController.cs" />
     <Compile Include="Controllers\PingController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\RadioController.cs" />

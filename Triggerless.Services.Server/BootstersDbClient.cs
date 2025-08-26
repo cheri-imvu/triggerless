@@ -1,11 +1,12 @@
-﻿using System;
+﻿using log4net;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
-using System.Threading.Tasks;
-using Triggerless.Models;
 using System.Linq;
-using System.Collections.Concurrent;
-using log4net;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using Triggerless.Models;
 
 namespace Triggerless.Services.Server
 {
@@ -45,6 +46,54 @@ namespace Triggerless.Services.Server
             }
             _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(PostSong)} finished");
             return response;
+        }
+
+        public async Task<TriggerbotLyricsEntry> GetLyrics(long productId)
+        {
+            _log?.Debug($"Get Lyrics: {productId}");
+            var response = new TriggerbotLyricsEntry();
+            using (var conn = await BootstersDbConnection.Get())
+            {
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = "[bootsters].[GetProductLyrics]";
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@ProductId", productId);
+                try
+                {
+                    using (var reader = await cmd.ExecuteReaderAsync(CommandBehavior.SingleRow))
+                    {
+                        if (reader.Read())
+                        {
+                            // ProductId, Lyrics, ModifiedDate, Version
+                            response = new TriggerbotLyricsEntry
+                            {
+                                Id = reader.GetInt64(0),
+                                Lyrics = reader.GetString(1),
+                                Modified = reader.GetDateTime(2),
+                                Version = reader.GetInt32(3)
+                            };
+                        }
+                        else
+                        {
+                            response.Id = 0;
+                            response.Lyrics = "404 Not found";
+                        }
+                    }
+                }
+                catch (Exception exc)
+                {
+
+                    //burn it for now
+                    response.Id = 0;
+                    response.Lyrics = $"{exc.GetType().Name}: {exc.Message}";
+                }
+            }
+            return response;
+        }
+
+        public async Task<int> SendLyrics(long productId,  string lyrics)
+        {
+
         }
 
         public async Task<TriggerlessRadioSongs> GetSongs(string djName, int count)
