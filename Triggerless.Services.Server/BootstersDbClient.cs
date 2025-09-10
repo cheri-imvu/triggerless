@@ -91,11 +91,7 @@ namespace Triggerless.Services.Server
             return response;
         }
 
-        public async Task<int> SendLyrics(long productId,  string lyrics)
-        {
-
-        }
-
+        
         public async Task<TriggerlessRadioSongs> GetSongs(string djName, int count)
         {
             _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(GetSongs)} begin");

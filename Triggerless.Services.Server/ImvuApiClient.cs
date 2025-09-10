@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Triggerless.Models;
@@ -18,6 +18,7 @@ using System.Security.Cryptography;
 using System.Web.UI;
 using System.Windows.Navigation;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 
 
@@ -119,20 +120,50 @@ namespace Triggerless.Services.Server
 
         public async Task<ImvuUser> GetUserByName(string userName)
         {
+            ImvuUser result = new ImvuUser { Id = -1 };
             _log?.Debug($"{nameof(ImvuApiClient)}.{nameof(GetUserByName)}({userName})");
-            var relUri = $"/users/avatarname/{userName}";
+            //var relUri = $"/users/avatarname/{userName}";
+
             try
             {
+                using (var client = new HttpClient())
+                {
+                    // Our best attempt at a page scrape
+                    var url = $"https://imvu-customer-sandbox.com/{userName}";
+                    var pattern = @"block=(\d+)";
+                    var html = await client.GetStringAsync(url);
+                    Match m = Regex.Match(html, pattern);
+                    if (m.Success)
+                    {
+                        long value = -1;
+                        if (long.TryParse(m.Groups[1].Value, out value))
+                        {
+                            result = await GetUser(value);
+                        }
+                        else
+                        {
+                            result.Message = "Something very weird happened, number was expected for CID";
+                        }
+                    }
+                    else
+                    {
+                        result.Message = "Avatar does not exist or the page is not yet set up.";
+                    }
+                }
+
+                /* old logic, this was removed from IMVU API
                 JObject j = await _service.GetJObject(relUri);
                 var result = j["denormalized"].First.ElementAt(0)["data"].ToObject<ImvuUser>();
+                */
                 _log?.Debug($"Success - {nameof(ImvuApiClient)}.{nameof(GetUserByName)}({userName})");
                 return result;
             }
             catch (Exception exc)
             {
                 _log?.Error("ImvuUser JSON could not be retrieved.", exc);
-                return new ImvuUser { Id = -1, Message = exc.Message };
+                result.Message = exc.Message;
             }
+            return result;
         }
 
         public async Task<ImvuUser> GetUser(long userId)

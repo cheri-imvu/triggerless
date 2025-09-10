@@ -18,7 +18,9 @@ namespace Triggerless.API.Controllers
         // GET: Lyrics
         public async Task<HttpResponseMessage> Get(long productId)
         {
-
+            var response = new HttpResponseMessage();
+            response.Content = new StringContent("Not implemented");
+            return response;
         }
     }
 }
