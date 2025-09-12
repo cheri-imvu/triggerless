@@ -14,7 +14,7 @@ namespace Triggerless.API.Controllers
     public class LyricsController : BaseController
     {
 
-        [Route("/")]
+        [Route("")]
         // GET: Lyrics
         public async Task<HttpResponseMessage> Get(long productId)
         {
