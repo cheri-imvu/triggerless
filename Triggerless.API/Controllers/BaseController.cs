@@ -19,7 +19,8 @@ namespace Triggerless.API.Controllers
         protected HttpResponseMessage GetJsonResponse(string json)
         {
             var response = Request.CreateResponse(HttpStatusCode.OK);
-            response.Headers.Add("Access-Control-Allow-Origin", "*");
+            // we take care of this at web.config now.
+            // response.Headers.Add("Access-Control-Allow-Origin", "*");
             response.Content = new StringContent(json, Encoding.UTF8, "application/json");
             return response;
         }

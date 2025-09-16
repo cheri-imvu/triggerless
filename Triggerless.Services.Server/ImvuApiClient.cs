@@ -11,14 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Triggerless.Models;
-using static Triggerless.Services.Server.NVorbisService;
 using Triggerless.XAFLib;
-using System.Web.Caching;
-using System.Security.Cryptography;
-using System.Web.UI;
-using System.Windows.Navigation;
-using System.Collections;
-using System.Text.RegularExpressions;
 
 
 
@@ -490,6 +483,60 @@ namespace Triggerless.Services.Server
             return result;
         }
 
+        public class ProductSound
+        {
+            public string Name { get; set; }
+            public string Url { get; set; }
+        }
+
+        private class ContentsEntry
+        {
+            [JsonProperty("name")]
+            public string Name { get; set; }
+            [JsonProperty("location")]
+            public string Location { get; set; }
+        }
+
+        public async Task<ProductSound[]> GetProductSounds(long productId)
+        {
+            var result = new List<ProductSound>();
+            using (var client = new HttpClient())
+            {
+                var contentUrl = RipService.GetUrl(productId, "_contents.json");
+                var indexUrl = RipService.GetUrl(productId, "index.xml");
+
+                var contentsJson = await client.GetStringAsync(contentUrl);
+                var indexXml = await client.GetStringAsync(indexUrl);
+
+                var contents = JsonConvert.DeserializeObject<List<ContentsEntry>>(contentsJson);
+                foreach (var entry in contents)
+                {
+                    if (string.IsNullOrWhiteSpace(entry.Location)) entry.Location = entry.Name;
+                }
+
+                var t = Template.LoadXml(indexXml);
+
+                var actions = t.Actions.Where(a => !string.IsNullOrWhiteSpace(a.Sound?.Name))
+                    .OrderBy(a => a.Name.ToLowerInvariant()).ToList();
+
+                foreach (var action in actions)
+                {
+                    var contentsEntry = contents
+                        .FirstOrDefault(e => e.Name.ToLowerInvariant() ==
+                            action.Sound.Name.ToLowerInvariant());
+                    if (contentsEntry == null || string.IsNullOrWhiteSpace(contentsEntry.Location)) continue;
+                    result.Add(new ProductSound
+                    {
+                        Name = action.Name,
+                        Url = RipService.GetUrl(productId, contentsEntry.Location),
+                    });
+                }
+            }
+
+
+
+            return result.ToArray();
+        }
     }
 }
 

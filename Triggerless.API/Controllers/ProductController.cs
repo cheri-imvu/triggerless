@@ -20,6 +20,15 @@ namespace Triggerless.API.Controllers
             return GetJsonResponseFromObject(await GetProduct(productId));
         }
 
+        [Route("api/product/sounds/{productId}")]
+        public async Task<HttpResponseMessage> GetProductSounds(long productId)
+        {
+            using (var client = new ImvuApiClient()) 
+            {
+                return GetJsonResponseFromObject(await client.GetProductSounds(productId));
+            }            
+        }
+
         public async Task<ImvuProduct> GetProduct(long productId) {
             using (var client = new ImvuApiClient())
             {
