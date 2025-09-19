@@ -24,6 +24,7 @@ namespace Triggerless.Services.Server
             _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(PostSong)} begin");
             _log?.Debug($"Post: djname = {post.djName}, title = {post.title}");
             var response = new TriggerlessPostResponse();
+            if (String.IsNullOrWhiteSpace(post.djName)) post.djName = "Cheri";
 
             using (var conn = await BootstersDbConnection.Get())
             {
@@ -67,6 +68,7 @@ namespace Triggerless.Services.Server
                             // ProductId, Lyrics, ModifiedDate, Version
                             response = new TriggerbotLyricsEntry
                             {
+                                Status = TriggerbotLyricsEntry.EntryStatus.Success,
                                 Id = reader.GetInt64(0),
                                 Lyrics = reader.GetString(1),
                                 Modified = reader.GetDateTime(2),
@@ -75,7 +77,8 @@ namespace Triggerless.Services.Server
                         }
                         else
                         {
-                            response.Id = 0;
+                            response.Id = productId;
+                            response.Status = TriggerbotLyricsEntry.EntryStatus.NotFound;
                             response.Lyrics = "404 Not found";
                         }
                     }
@@ -84,13 +87,13 @@ namespace Triggerless.Services.Server
                 {
 
                     //burn it for now
-                    response.Id = 0;
+                    response.Id = productId;
+                    response.Status = TriggerbotLyricsEntry.EntryStatus.Error;
                     response.Lyrics = $"{exc.GetType().Name}: {exc.Message}";
                 }
             }
             return response;
         }
-
         
         public async Task<TriggerlessRadioSongs> GetSongs(string djName, int count)
         {
@@ -131,6 +134,44 @@ namespace Triggerless.Services.Server
 
             return response;
 
+        }
+
+        public async Task<TriggerlessRadioSong> GetLastSong(string djName)
+        {
+            _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(GetLastSong)} begin");
+            _log?.Debug($"Post: djname = {djName}");
+
+            var response = new TriggerlessRadioSong { djName = djName };
+
+            using (var conn = await BootstersDbConnection.Get())
+            {
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = "bootsters.triggerless_radio_get_last_song";
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@djname", djName);
+                try
+                {
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (reader.Read())
+                        {
+                            response.title = reader.GetString(0);
+                        } 
+                        else
+                        {
+                            response.title = "Not Available";
+                        }
+                    }
+                    _log.Debug($"Success - 1 song returned");
+
+                }
+                catch (Exception e)
+                {
+                    _log.Error($"Failed - {e.Message}", e);
+                    response.title = $"failed; {e.Message}";
+                }
+                return response;
+            }
         }
 
         public async void SaveRipInfo(int productId, string ipAddress, DateTime date)
@@ -237,7 +278,6 @@ namespace Triggerless.Services.Server
             }
         }
 
-
         public async Task<IEnumerable<RipEntryExt>> RipLogEntriesByIpExt(string ipAddress)
         {
             _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(RipLogEntriesByIpExt)} IP: {ipAddress}");
@@ -290,5 +330,30 @@ namespace Triggerless.Services.Server
             }
         }
 
+        public async Task<TriggerbotLyricsEntry.EntryStatus> SaveLyrics(long productId, string lyrics)
+        {
+            var result = TriggerbotLyricsEntry.EntryStatus.Empty;
+            using (var conn = await BootstersDbConnection.Get())
+            {
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = "[bootsters].[AddProductLyrics]";
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@ProductId", productId);
+                cmd.Parameters.AddWithValue("@Lyrics", lyrics);
+                try
+                {
+                    int sqlResult = await cmd.ExecuteNonQueryAsync();
+                    result = (sqlResult > 0) ? 
+                        TriggerbotLyricsEntry.EntryStatus.Success : 
+                        TriggerbotLyricsEntry.EntryStatus.NotFound;
+                }
+                catch (Exception)
+                {
+                    result = TriggerbotLyricsEntry.EntryStatus.Error;
+                    //burn it for now
+                }
+            }
+            return result;
+        }
     }
 }
