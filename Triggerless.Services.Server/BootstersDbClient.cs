@@ -3,9 +3,10 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using Triggerless.Models;
 
 namespace Triggerless.Services.Server
@@ -340,16 +341,22 @@ namespace Triggerless.Services.Server
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@ProductId", productId);
                 cmd.Parameters.AddWithValue("@Lyrics", lyrics);
+                int version = 1;
+                var pNewVersion = cmd.Parameters.Add("@NewVersion", SqlDbType.Int);
+                pNewVersion.Direction = ParameterDirection.Output;
+
                 try
                 {
                     int sqlResult = await cmd.ExecuteNonQueryAsync();
-                    result = (sqlResult > 0) ? 
+                    version = (int)pNewVersion.Value;
+                    result = (version > 0) ? 
                         TriggerbotLyricsEntry.EntryStatus.Success : 
                         TriggerbotLyricsEntry.EntryStatus.NotFound;
                 }
-                catch (Exception)
+                catch (Exception exc)
                 {
                     result = TriggerbotLyricsEntry.EntryStatus.Error;
+                    Debug.WriteLine(exc.ToString());
                     //burn it for now
                 }
             }

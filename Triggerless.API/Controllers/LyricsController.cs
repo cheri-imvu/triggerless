@@ -1,22 +1,18 @@
-﻿using log4net;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
-using System.Web.Helpers;
 using System.Web.Http;
 using Triggerless.Services.Server;
+using Triggerless.Models;
 
 namespace Triggerless.API.Controllers
 {
     [RoutePrefix("api/lyrics")]
     public class LyricsController : BaseController
     {
-
         [Route("{productId:long}"), HttpGet]        // GET: Lyrics
         public async Task<HttpResponseMessage> Get(long productId)
         {
@@ -26,16 +22,16 @@ namespace Triggerless.API.Controllers
 
             switch (result.Status)
             {
-                case Triggerless.Models.TriggerbotLyricsEntry.EntryStatus.Error:
-                    response.StatusCode = System.Net.HttpStatusCode.InternalServerError;
+                case TriggerbotLyricsEntry.EntryStatus.Error:
+                    response.StatusCode = HttpStatusCode.InternalServerError;
                     response.Content = new StringContent($"{result.Lyrics}");
                     break;
-                case Triggerless.Models.TriggerbotLyricsEntry.EntryStatus.NotFound:
-                    response.StatusCode = System.Net.HttpStatusCode.NotFound;
+                case TriggerbotLyricsEntry.EntryStatus.NotFound:
+                    response.StatusCode = HttpStatusCode.NotFound;
                     response.Content = new StringContent($"The lyrics for ProductId {productId} have not been added to the database yet. ");
                     break;
-                case Triggerless.Models.TriggerbotLyricsEntry.EntryStatus.Success:
-                    response.StatusCode = System.Net.HttpStatusCode.OK;
+                case TriggerbotLyricsEntry.EntryStatus.Success:
+                    response.StatusCode = HttpStatusCode.OK;
                     var cd = new ContentDispositionHeaderValue("attachment")
                     {
                         FileName = $"{productId}.lyrics"
@@ -50,13 +46,42 @@ namespace Triggerless.API.Controllers
         }
 
         [Route("{productId:long}"), HttpPost]        // GET: Lyrics
-        public async Task<HttpResponseMessage> Post(long productId, [FromBody] string lyrics)
+        public async Task<HttpResponseMessage> Post(long productId)
         {
             var response = new HttpResponseMessage();
-            var dbClient = new BootstersDbClient();
-            var result = await dbClient.SaveLyrics(productId, lyrics);
+            var lyrics = await Request.Content.ReadAsStringAsync(); // raw body
+            TriggerbotLyricsEntry.EntryStatus result = TriggerbotLyricsEntry.EntryStatus.Empty;
 
-            // save stuff
+            if (string.IsNullOrWhiteSpace(lyrics))
+            {
+                response.StatusCode = HttpStatusCode.BadRequest;
+                response.Content = new StringContent("Dude, you need to send the lyrics in the HTTP body");
+            }
+            else
+            {
+                var dbClient = new BootstersDbClient();
+                try
+                {
+                    result = await dbClient.SaveLyrics(productId, lyrics);
+                    if (result == TriggerbotLyricsEntry.EntryStatus.Error)
+                    {
+                        response.StatusCode = HttpStatusCode.InternalServerError;
+                        response.Content = new StringContent("Unable to save lyrics to database");
+                    }
+                    else
+                    {
+                        response.StatusCode = HttpStatusCode.OK;
+                        response.Content = new StringContent("Lyrics save was successful");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    response.StatusCode = HttpStatusCode.InternalServerError;
+                    response.Content = new StringContent(ex.ToString());
+                }
+
+            }
+
             return response;
 
         }
