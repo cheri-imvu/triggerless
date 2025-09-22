@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Configuration;
-using System.Diagnostics;
-using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Triggerless.Services.Common;
 
 namespace Triggerless.Services.Server
@@ -22,6 +17,6 @@ namespace Triggerless.Services.Server
 
         }
 
-        public static string OsCsid => ConfigurationManager.AppSettings["osCsid"] ?? Settings.Default.osCsid;
+        public static string OsCsid => ConfigurationManager.AppSettings["osCsid"];
     }
 }

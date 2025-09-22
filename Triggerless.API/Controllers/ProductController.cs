@@ -92,6 +92,18 @@ namespace Triggerless.API.Controllers
             }
         }
 
+        [HttpGet, Route("api/product/derivations/{productId}")]
+        public async Task<ImvuProduct[]> GetDerivations(long productId)
+        {
+            var result = new List<ImvuProduct>();
+
+            using (var client = new ImvuPageClient())
+            {
+                result = await client.GetDerivedProducts(productId);
+            }
+            return result.ToArray();
+        }
+
     }
 }
 

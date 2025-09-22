@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Configuration;
-using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -45,6 +42,11 @@ namespace Triggerless.Services.Common
 
         public async Task<string> GetJsonString(string relativeUri) {
             PrepareForJson();
+            return await _client?.GetStringAsync(relativeUri);
+        }
+
+        public async Task<string> GetHtmlString(string relativeUri)
+        {
             return await _client?.GetStringAsync(relativeUri);
         }
 
