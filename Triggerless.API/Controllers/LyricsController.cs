@@ -36,9 +36,9 @@ namespace Triggerless.API.Controllers
                     {
                         FileName = $"{productId}.lyrics"
                     };
-                    response.Content.Headers.ContentDisposition = cd;
                     response.Content = new StringContent(result.Lyrics,
                         new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), "application/json");
+                    response.Content.Headers.ContentDisposition = cd;
                     break;
                 default: throw new Exception($"What the hell happened?\n{result.Lyrics}");
             }
@@ -49,37 +49,55 @@ namespace Triggerless.API.Controllers
         public async Task<HttpResponseMessage> Post(long productId)
         {
             var response = new HttpResponseMessage();
-            var lyrics = await Request.Content.ReadAsStringAsync(); // raw body
-            TriggerbotLyricsEntry.EntryStatus result = TriggerbotLyricsEntry.EntryStatus.Empty;
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"ProductID: {productId}");
+            sb.AppendLine($"Request is null: {Request is null}");
+            sb.AppendLine($"Content is null: {Request.Content is null}");
 
-            if (string.IsNullOrWhiteSpace(lyrics))
+            try
             {
-                response.StatusCode = HttpStatusCode.BadRequest;
-                response.Content = new StringContent("Dude, you need to send the lyrics in the HTTP body");
-            }
-            else
-            {
-                var dbClient = new BootstersDbClient();
-                try
+                var lyrics = await Request.Content.ReadAsStringAsync(); // raw body
+                sb.AppendLine($"Lyrics not null: {lyrics == null}");
+                
+                TriggerbotLyricsEntry.EntryStatus result = TriggerbotLyricsEntry.EntryStatus.Empty;
+
+                if (string.IsNullOrWhiteSpace(lyrics))
                 {
-                    result = await dbClient.SaveLyrics(productId, lyrics);
-                    if (result == TriggerbotLyricsEntry.EntryStatus.Error)
+                    response.StatusCode = HttpStatusCode.BadRequest;
+                    response.Content = new StringContent("Dude, you need to send the lyrics in the HTTP body");
+                }
+                else
+                {
+                    sb.AppendLine($"Opening Database");
+                    var dbClient = new BootstersDbClient();
+                    try
+                    {
+                        sb.AppendLine("About to save lyrics");
+                        result = await dbClient.SaveLyrics(productId, lyrics);
+                        sb.AppendLine($"SaveLyrics gave: {response}");
+                        if (result == TriggerbotLyricsEntry.EntryStatus.Error)
+                        {
+                            response.StatusCode = HttpStatusCode.InternalServerError;
+                            response.Content = new StringContent("Unable to save lyrics to database");
+                        }
+                        else
+                        {
+                            response.StatusCode = HttpStatusCode.OK;
+                            response.Content = new StringContent("Lyrics save was successful");
+                        }
+                    }
+                    catch (Exception ex)
                     {
                         response.StatusCode = HttpStatusCode.InternalServerError;
-                        response.Content = new StringContent("Unable to save lyrics to database");
+                        response.Content = new StringContent(ex.ToString());
                     }
-                    else
-                    {
-                        response.StatusCode = HttpStatusCode.OK;
-                        response.Content = new StringContent("Lyrics save was successful");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    response.StatusCode = HttpStatusCode.InternalServerError;
-                    response.Content = new StringContent(ex.ToString());
-                }
 
+                }
+            }
+            catch (Exception exc)
+            {
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.Content = new StringContent(sb.ToString() + exc.ToString());
             }
 
             return response;
