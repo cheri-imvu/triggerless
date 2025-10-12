@@ -77,10 +77,7 @@ namespace Triggerless.API.Controllers
                 }
 
                 return InternalServerError(); // generic failure message
-
             }
-
-
         }
     }
 }

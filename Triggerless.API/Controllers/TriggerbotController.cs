@@ -13,9 +13,11 @@ namespace Triggerless.API.Controllers
     [RoutePrefix("api/bot")]
     public class TriggerbotController : CustomerController
     {
-        [Route("event/{eventId:short}"), HttpPost]
-        public async Task<IHttpActionResult> RecordEvent(short eventId, [FromBody] string jsonText)
+        [Route("event/{eventId}"), HttpPost]
+        public async Task<IHttpActionResult> RecordEvent(short eventId)
         {
+            var jsonText = await Request.Content.ReadAsStringAsync(); // raw body
+
             IHttpActionResult result = Ok("Nothing yet");
             var location = "Internal Network";
             var ip = GetClientIp();
