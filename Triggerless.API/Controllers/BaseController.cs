@@ -6,9 +6,11 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using Triggerless.API.Models;
+using static Triggerless.API.Models.Discord;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -16,6 +18,8 @@ namespace Triggerless.API.Controllers
 {
     public class BaseController: ApiController
     {
+        protected const string UNKNOWN_IP = "unknown";
+
         protected HttpResponseMessage GetJsonResponse(string json)
         {
             var response = Request.CreateResponse(HttpStatusCode.OK);
@@ -82,8 +86,37 @@ namespace Triggerless.API.Controllers
                 }
             }
 
-            return ipAddress ?? Discord.UNKNOWN_IP;
+            return ipAddress ?? UNKNOWN_IP;
         }
+
+        protected static async Task<string> GetLocationFromIpAsync(string ipAddress)
+        {
+            // Note that the free plan is limited to 60 requests per minute.
+            string url = $"https://free.freeipapi.com/api/json/{ipAddress}";
+
+            using (var client = new HttpClient())
+            {
+                try
+                {
+                    var response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+
+                    var json = await response.Content.ReadAsStringAsync();
+                    var ipInfo = JsonConvert.DeserializeObject<IpInfo>(json);
+
+                    if (ipInfo == null || string.IsNullOrWhiteSpace(ipInfo.cityName))
+                        return "Unknown location";
+
+                    return $"{ipInfo.cityName}, {ipInfo.regionName}, {ipInfo.countryName}";
+                }
+                catch (Exception ex)
+                {
+                    // You can log this if needed
+                    return $"Error: {ex.Message}";
+                }
+            }
+        }
+
 
     }
 }

@@ -1,22 +1,18 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
+using Triggerless.Services.Server;
 
 namespace Triggerless.API.Models
 {
     public class Discord : IDisposable
     {
-        public const string UNKNOWN_IP = "unknown";
         private static DiscordClient _client;
-        private static ulong _channelId = 1360224553208516638;
+        private static ulong PublicChannelId => ulong.Parse(ConfigurationManager.AppSettings["DiscordChannelPublic"]);
+        private static ulong PrivateChannelId => ulong.Parse(ConfigurationManager.AppSettings["DiscordChannelPrivate"]);
 
         public static async Task<int> CleanupChannel()
         {
@@ -24,7 +20,7 @@ namespace Triggerless.API.Models
             {
                 await GetClient().ConfigureAwait(false);
             }
-            DiscordChannel channel = await _client.GetChannelAsync(_channelId);
+            DiscordChannel channel = await _client.GetChannelAsync(id: PublicChannelId);
             var messages = await channel.GetMessagesAsync(1000).ConfigureAwait(false);
             foreach (var message in messages)
             {
@@ -51,7 +47,9 @@ namespace Triggerless.API.Models
             }
             return result;
         }
-        public static async Task<int> SendMessage(string title, string body)
+
+
+        public static async Task<int> SendMessage(string title, string body, ulong cid = 0)
         {
             try
             {
@@ -62,15 +60,17 @@ namespace Triggerless.API.Models
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder
                 {
-                    Color = DiscordColor.HotPink,
+                    Color = DiscordColor.Chartreuse,
                     Title = title,
                     Description = body
                 };
 
-                DiscordChannel channel = await _client.GetChannelAsync(_channelId);
+                DiscordChannel channel = await _client.GetChannelAsync(PublicChannelId);
 
                 await channel.SendMessageAsync(embed).ConfigureAwait(false);
 
+                BootstersDbClient client = new BootstersDbClient();
+                //client.SaveEvent()
                 return 0;
             }
             catch (Exception)
@@ -122,33 +122,5 @@ namespace Triggerless.API.Models
             public string regionName { get; set; }
             public string countryName { get; set; }
         }
-
-        public static async Task<string> GetLocationFromIpAsync(string ipAddress)
-        {
-            string url = $"https://free.freeipapi.com/api/json/{ipAddress}";
-
-            using (var client = new HttpClient())
-            {
-                try
-                {
-                    var response = await client.GetAsync(url);
-                    response.EnsureSuccessStatusCode();
-
-                    var json = await response.Content.ReadAsStringAsync();
-                    var ipInfo = JsonConvert.DeserializeObject<IpInfo>(json);
-
-                    if (ipInfo == null || string.IsNullOrWhiteSpace(ipInfo.cityName))
-                        return "Unknown location";
-
-                    return $"{ipInfo.cityName}, {ipInfo.regionName}, {ipInfo.countryName}";
-                }
-                catch (Exception ex)
-                {
-                    // You can log this if needed
-                    return $"Error: {ex.Message}";
-                }
-            }
-        }
-
     }
 }

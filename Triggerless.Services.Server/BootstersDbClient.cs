@@ -362,5 +362,83 @@ namespace Triggerless.Services.Server
             }
             return result;
         }
+
+        // ===== Triggerbot Events
+
+        /*
+         * 
+INSERT INTO bootsters.triggerbot_event_list (EventId, Name) VALUES
+(0, 'Unknown'), (1, 'AppInstall'), (2, 'AppUninstall'), (3, 'AppStart'), (4, 'AppCrash'), (5, 'AppCleanExit'),
+(6, 'CutTune'), (7, 'PlayTune'), (8, 'LyricsSaved')
+         * */
+        public enum EventType : short
+        {
+            Empty = 0,
+            AppInstall = 1,
+            AppUninstall = 2,
+            AppStart = 3,
+            AppCrash = 4,
+            AppCleanExit = 5,
+            CutTune = 6,
+            PlayTune = 7,
+            LyricsSaved = 8,
+            DiscordSent = 9,
+        }
+
+        public enum EventResultType : byte
+        {
+            Empty = 0,
+            Success,
+            Fail
+        }
+
+        public class EventResult
+        {
+            public EventResultType Type { get; set; }
+            public string Message { get; set; }
+        }
+
+        public class Event
+        {
+            public long Id { get; set; } // autoincrement
+            public DateTime Time { get; set; } = DateTime.UtcNow; // also defaults in DB
+            public EventType Type { get; set; } // stored as short
+            public long Cid { get; set; } // customer id
+            public string JsonText { get; set; } // json text with details that can be deserialized later.
+
+        }
+
+        private string SqlTextOrNull(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return "NULL";
+            return "N'" + text.Replace("'", "''") + "'";
+        }
+
+        public async Task<EventResult> SaveEventAsync(EventType type, long cid, string jsonText)
+        {
+            var result = new EventResult();
+            using (var conn = await BootstersDbConnection.Get())
+            {
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = "INSERT INTO [bootsters].[triggerbot_event] " +
+                    $"(EventId, Cid, JsonText) VALUES ({(short)type}, {cid}, {SqlTextOrNull(jsonText)});";
+
+                try
+                {
+                    int i = cmd.ExecuteNonQuery();
+                    result.Message = "Saved";
+                    result.Type = EventResultType.Success;
+                }
+                catch (Exception ex)
+                {
+                    result.Message = ex.Message;
+                    result.Type = EventResultType.Fail;
+                }
+            }
+
+            return result;
+        }
+
+
     }
 }

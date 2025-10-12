@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using Triggerless.API.Models;
+using Triggerless.Services.Server;
 
 namespace Triggerless.API.Controllers
 {
@@ -20,7 +22,7 @@ namespace Triggerless.API.Controllers
 
 
     [RoutePrefix("api/bot")]
-    public class DiscordBotController : BaseController
+    public class DiscordBotController : CustomerController
     {
 
         [HttpPost]
@@ -41,15 +43,20 @@ namespace Triggerless.API.Controllers
                 var body = request.Body;
                 var location = "Internal Network";
                 var ip = GetClientIp();
-                if (ip != Discord.UNKNOWN_IP && ip != "127.0.0.1")
+                if (ip != UNKNOWN_IP && ip != "127.0.0.1")
                 {
-                    location = await Discord.GetLocationFromIpAsync(ip);
+                    location = await GetLocationFromIpAsync(ip);
                 }
                 body += Environment.NewLine + $"From: {location}";
 
                 int result = await Discord.SendMessage(request.Title, body);
                 if (result == 0)
+                {
+                    var dbClient = new BootstersDbClient();
+                    long cid = HasValidCustomerId() ? CustomerID.Value : 0;
+                    var x = await dbClient.SaveEventAsync(BootstersDbClient.EventType.DiscordSent, cid, JsonConvert.SerializeObject(request));
                     return Ok("Message sent successfully.");
+                }
                 else
                     return InternalServerError(new System.Exception("Failed to send Discord message."));
             }

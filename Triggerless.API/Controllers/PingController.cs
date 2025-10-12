@@ -12,7 +12,7 @@ namespace Triggerless.API.Controllers
     {
         [HttpGet]
         [Route("api/ping")]
-        public async Task<IHttpActionResult> Ping()
+        public IHttpActionResult Ping()
         {
             try
             {
