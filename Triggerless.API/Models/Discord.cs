@@ -20,7 +20,7 @@ namespace Triggerless.API.Models
             {
                 await GetClient().ConfigureAwait(false);
             }
-            DiscordChannel channel = await _client.GetChannelAsync(id: PublicChannelId);
+            DiscordChannel channel = await _client.GetChannelAsync(id: PrivateChannelId);
             var messages = await channel.GetMessagesAsync(1000).ConfigureAwait(false);
             foreach (var message in messages)
             {
@@ -65,7 +65,7 @@ namespace Triggerless.API.Models
                     Description = body
                 };
 
-                DiscordChannel channel = await _client.GetChannelAsync(PublicChannelId);
+                DiscordChannel channel = await _client.GetChannelAsync(PrivateChannelId);
 
                 await channel.SendMessageAsync(embed).ConfigureAwait(false);
 

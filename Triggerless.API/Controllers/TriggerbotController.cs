@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.Remoting.Contexts;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Triggerless.Services.Server;
+using static Triggerless.Services.Server.BootstersDbClient;
 
 namespace Triggerless.API.Controllers
 {
@@ -60,6 +62,32 @@ namespace Triggerless.API.Controllers
                 result = InternalServerError(exception);
             }
             return result;
+        }
+
+
+
+        [Route("events/{page}")]
+        public async Task<IHttpActionResult> Page(int page = 0)
+        {
+            throw new NotImplementedException();
+            /*
+            var dbClient = new BootstersDbClient();
+            BootstersDbClient.EventResult dbResult = null;
+            Exception exception = null;
+            try
+            {
+                dbResult = await dbClient.SaveEventAsync(eventType, cid, jsonText);
+            }
+            catch (Exception ex)
+            {
+                dbResult = new BootstersDbClient.EventResult()
+                {
+                    Message = ex.Message,
+                    Type = BootstersDbClient.EventResultType.Fail
+                };
+                exception = ex;
+            }
+            */
         }
     }
 }
