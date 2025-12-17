@@ -38,11 +38,11 @@ namespace Triggerless.XAFLib
 
         public FilenameFilter(IEnumerable<string> filenames)
         {
-            _filenames = filenames.Select(f => f.ToLower());
+            _filenames = filenames.Select(f => f.ToLowerInvariant());
         }
         public bool IsMatch(string name)
         {
-            return _filenames.Contains(name.ToLower());
+            return _filenames.Contains(name.ToLowerInvariant());
         }
     }
 }
