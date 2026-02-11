@@ -1,25 +1,14 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 using Triggerless.API.Models;
 using Triggerless.Services.Server;
 
 namespace Triggerless.API.Controllers
 {
-    public class DiscordMessageRequest
-    {
-        public string Title { get; set; }
-        public string Body { get; set; }
-    }
-
 
     [RoutePrefix("api/bot")]
     public class DiscordBotController : CustomerController

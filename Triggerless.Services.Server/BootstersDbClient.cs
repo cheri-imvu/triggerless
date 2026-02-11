@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Dapper;
 using System.Data;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -95,7 +95,7 @@ namespace Triggerless.Services.Server
             }
             return response;
         }
-        
+
         public async Task<TriggerlessRadioSongs> GetSongs(string djName, int count)
         {
             _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(GetSongs)} begin");
@@ -157,7 +157,7 @@ namespace Triggerless.Services.Server
                         if (reader.Read())
                         {
                             response.title = reader.GetString(0);
-                        } 
+                        }
                         else
                         {
                             response.title = "Not Available";
@@ -191,7 +191,7 @@ namespace Triggerless.Services.Server
             }
         }
 
-        public async Task<IEnumerable<RipCountEntry>> RipLogSummary ()
+        public async Task<IEnumerable<RipCountEntry>> RipLogSummary()
         {
             _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(RipLogSummary)}");
             var result = new List<RipCountEntry>();
@@ -204,7 +204,8 @@ namespace Triggerless.Services.Server
                 cmd.CommandText = sql;
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {
-                    while (await reader.ReadAsync()) {
+                    while (await reader.ReadAsync())
+                    {
                         result.Add(new RipCountEntry
                         {
                             IpAddress = reader.GetString(0),
@@ -349,8 +350,8 @@ namespace Triggerless.Services.Server
                 {
                     int sqlResult = await cmd.ExecuteNonQueryAsync();
                     version = (int)pNewVersion.Value;
-                    result = (version > 0) ? 
-                        TriggerbotLyricsEntry.EntryStatus.Success : 
+                    result = (version > 0) ?
+                        TriggerbotLyricsEntry.EntryStatus.Success :
                         TriggerbotLyricsEntry.EntryStatus.NotFound;
                 }
                 catch (Exception exc)
@@ -363,14 +364,6 @@ namespace Triggerless.Services.Server
             return result;
         }
 
-        // ===== Triggerbot Events
-
-        /*
-         * 
-INSERT INTO bootsters.triggerbot_event_list (EventId, Name) VALUES
-(0, 'Unknown'), (1, 'AppInstall'), (2, 'AppUninstall'), (3, 'AppStart'), (4, 'AppCrash'), (5, 'AppCleanExit'),
-(6, 'CutTune'), (7, 'PlayTune'), (8, 'LyricsSaved')
-         * */
         public enum EventType : short
         {
             Empty = 0,
@@ -440,5 +433,132 @@ INSERT INTO bootsters.triggerbot_event_list (EventId, Name) VALUES
         }
 
 
+        private const string PRODUCTS_TABLE = "dbo.TriggerbotProducts";
+        private const string TRIGGERS_TABLE = "dbo.TriggerbotTriggers";
+        public async Task<CollectorResponsePayload> LookupProductTriggers(ProductRecord payload)
+        {
+            var result = new CollectorResponsePayload
+            {
+                ProductId = payload.ProductId,
+                ProductName = payload.ProductName,
+                CreatorName = payload.CreatorName,
+                ImageLocation = payload.ImageLocation,
+                ImageBytes = payload.ImageBytes,
+                DateCreated = DateTime.UtcNow,
+                AddedBy = payload.AddedBy,
+                Triggers = new List<TriggerEntry>()
+            };
+
+            ProductRecord existingProduct = null;
+            List<TriggerEntry> existingTriggers = new List<TriggerEntry>();
+            using (var cxn = await BootstersDbConnection.Get())
+            {
+                var sql = $"select * from {PRODUCTS_TABLE} WHERE ProductId = @productId";
+                existingProduct = await cxn.QuerySingleOrDefaultAsync<ProductRecord>(sql, new { productId = payload.ProductId });
+
+                sql = $"select * from {TRIGGERS_TABLE} WHERE ProductId = @productId";
+                existingTriggers.AddRange(await cxn.QueryAsync<TriggerEntry>(sql, new { productId = payload.ProductId }));
+
+                if (existingProduct == null) // this is new so let's add all the stuff we can't get here
+                {
+                    sql = $@"INSERT INTO {PRODUCTS_TABLE} (ProductId, ProductName, CreatorName,
+                    ImageLocation, ImageBytes, DateCreated, AddedBy) VALUES 
+                    (@ProductId, @ProductName, @CreatorName, 
+                    @ImageLocation, @ImageBytes, @DateCreated, @AddedBy)";
+                    int changeCount = await cxn.ExecuteAsync(sql, new
+                    {
+                        @ProductId = payload.ProductId,
+                        @ProductName = payload.ProductName,
+                        @CreatorName = payload.CreatorName,
+                        @ImageLocation = payload.ImageLocation,
+                        @ImageBytes = payload.ImageBytes,
+                        @DateCreated = DateTime.UtcNow,
+                        @AddedBy = payload.AddedBy
+                    });
+                }
+                else
+                {
+                    sql = $@"UPDATE {PRODUCTS_TABLE} SET
+                    ProductName = @ProductName,
+                    CreatorName = @CreatorName,
+                    ImageLocation = @ImageLocation,
+                    ImageBytes = @ImageBytes,
+                    AddedBy = @AddedBy
+                    WHERE ProductId = @ProductId";
+                    int changeCount = await cxn.ExecuteAsync(sql, new
+                    {
+                        @ProductId = payload.ProductId,
+                        @ProductName = payload.ProductName,
+                        @CreatorName = payload.CreatorName,
+                        @ImageLocation = payload.ImageLocation,
+                        @ImageBytes = payload.ImageBytes,
+                        @AddedBy = payload.AddedBy
+                    });
+                }
+
+                // if payload.Triggers is empty then this is a request for cached
+                // existingTriggers. If we already have a copy of the results in the database,
+                // we'll send those in the result.
+                // if we don't have any existingTriggers cached, we'll send back zero
+                // existingTriggers, which will signal the caller to go get those existingTriggers
+                // now, and have us save them after they've got them.
+
+                if (existingTriggers.Any())
+                {
+                    result.Triggers.AddRange(existingTriggers);
+                    result.Message = $"{existingTriggers.Count} cached triggers are in this payload";
+                    result.Result = ScanResultType.Success;
+                }
+
+
+            } // dispose connection
+            return result;
+        }
+
+        public async Task<ScanResult> SaveProductTriggers(List<TriggerEntry> triggers)
+        {
+            if (!triggers.Any())
+            {
+                return new ScanResult
+                {
+                    Message = "No triggers were provided in the request",
+                    Result = ScanResultType.ZeroTriggers,
+                    ProductId = 0,
+                    TriggerResults = new List<TriggerResult>()
+                };
+            }
+
+            var result = new ScanResult
+            {
+                Message = string.Empty,
+                Result = ScanResultType.Success,
+                ProductId = triggers.First().ProductId
+            };
+
+            using (var cxn = await BootstersDbConnection.Get())
+            {
+                // there shouldn't be any cached yet, this is a sanity check
+                var sql = $@"DELETE FROM {TRIGGERS_TABLE} WHERE ProductId = @ProductId;";
+                _ = cxn.Execute(sql, new {ProductId = triggers.First().ProductId});
+
+                // now supposedly we can add them all in one C# Dapper statement, although
+                // this inserts them one at a time in reality and returns the insertec count
+
+                sql = $@"INSERT INTO {TRIGGERS_TABLE} (ProductId, TriggerName, OggName, Location,
+                Sequence, Prefix, LengthMS, WaitMS) VALUES
+                (@ProductId, @TriggerName, @OggName, @Location,
+                @Sequence, @Prefix, @LengthMS, @WaitMS);";
+                var insertedCount = await cxn.ExecuteAsync(sql, triggers);
+                result.Message = $"{triggers.Count} triggers were supplied and all {insertedCount} were saved.";
+                if (insertedCount != triggers.Count)
+                {
+                    result.Result = ScanResultType.DatabaseError;
+                    result.Message = $"{triggers.Count} triggers were supplied but only {insertedCount} were saved.";
+                }
+
+            } // dispose connection
+
+            return result;
+        }
     }
 }

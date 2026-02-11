@@ -4,7 +4,14 @@ using System;
 using System.Configuration;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Triggerless.Services.Server;
+
+public class DiscordMessageRequest
+{
+    public string Title { get; set; }
+    public string Body { get; set; }
+}
+
+
 
 namespace Triggerless.API.Models
 {
@@ -67,9 +74,9 @@ namespace Triggerless.API.Models
 
                 DiscordChannel channel = await _client.GetChannelAsync(PrivateChannelId);
 
-                await channel.SendMessageAsync(embed).ConfigureAwait(false);
+                await channel.SendMessageAsync(embed);
 
-                BootstersDbClient client = new BootstersDbClient();
+                //BootstersDbClient client = new BootstersDbClient();
                 //client.SaveEvent()
                 return 0;
             }

@@ -2,17 +2,18 @@
 using System.Net.Http;
 using Triggerless.Services.Common;
 
+
 namespace Triggerless.Services.Client
 {
-    public class TriggerlessApiService: ApiService
+    public class ImvuContentApiService : ApiService
     {
-        public TriggerlessApiService()
+        public ImvuContentApiService()
         {
-            //_baseAddress = "http://localhost:61120/api/";
-            _baseAddress = "https://triggerless.com/api/";
+            _baseAddress = "https://userimages-akm.imvu.com/productdata/";
             _handler = new HttpClientHandler();
             _client = new HttpClient(_handler) { BaseAddress = new Uri(_baseAddress) };
         }
 
     }
 }
+

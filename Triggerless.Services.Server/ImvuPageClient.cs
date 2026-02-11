@@ -108,7 +108,7 @@ namespace Triggerless.Services.Server
             do
             {
                 var pageUrl = $"/shop/web_search.php?derived_from={productId}&page={page}";
-                var html = await _service.GetHtmlString(pageUrl);
+                var html = await _service.GetString(pageUrl);
                 var pattern = @"product-index-\d+"" id=""(?<pid>\d+)"""; var matches = Regex.Matches(html, pattern);
                 foreach (Match m in matches)
                 {
