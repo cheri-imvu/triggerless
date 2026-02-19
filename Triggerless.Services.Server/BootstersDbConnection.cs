@@ -10,6 +10,7 @@ namespace Triggerless.Services.Server
 {
     public class BootstersDbConnection
     {
+
         public static async Task<SqlConnection> Get()
         {
             var connStr = ConfigurationManager.ConnectionStrings["bootsters_db"].ConnectionString;

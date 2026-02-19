@@ -43,7 +43,13 @@ namespace Triggerless.API.Controllers
                 {
                     var dbClient = new BootstersDbClient();
                     long cid = HasValidCustomerId() ? CustomerID.Value : 0;
-                    var x = await dbClient.SaveEventAsync(BootstersDbClient.EventType.DiscordSent, cid, JsonConvert.SerializeObject(request));
+                    var payload = new
+                    {
+                        Title = request.Title,
+                        Body = request.Body,
+                        Location = location,
+                    };
+                    var x = await dbClient.SaveEventAsync(BootstersDbClient.EventType.DiscordSent, cid, JsonConvert.SerializeObject(payload));
                     return Ok("Message sent successfully.");
                 }
                 else

@@ -113,31 +113,89 @@ namespace Triggerless.Services.Client
             };
             //result.Triggers.AddRange(payload.Triggers); do this last
 
+            const bool parallel = true;
 
-
-
-            var processorCount = Environment.ProcessorCount;
-            int maxThreads = 2 * processorCount / 3;
-            var semaphore = new SemaphoreSlim(maxThreads);
             bool successAll = true;
-
-            var tasks = payload.Triggers.Select(async trigger =>
+            if (parallel)
             {
-                var tryCount = 0;
-                var tryMax = 10;
-                await semaphore.WaitAsync();
-                try
-                {
-                    var start = DateTime.Now;
+                var processorCount = Environment.ProcessorCount;
+                int maxThreads = 2 * processorCount / 3;
+                var semaphore = new SemaphoreSlim(maxThreads);
 
-                    using (var triggerClient = new ImvuContentApiClent())
+                var tasks = payload.Triggers.Select(async trigger =>
+                {
+                    var tryCount = 0;
+                    var tryMax = 10;
+                    await semaphore.WaitAsync();
+                    try
                     {
+                        var start = DateTime.Now;
+
+                        using (var triggerClient = new ImvuContentApiClent())
+                        {
+                            bool bSuccess = false;
+                            while (tryCount < tryMax)
+                            {
+                                try
+                                {
+                                    trigger.LengthMS = await triggerClient.GetOggLengthMS(trigger.ProductId, trigger.Location);
+                                    trigger.WaitMS = (DateTime.Now - start).TotalMilliseconds;
+                                    bSuccess = true;
+                                    break;
+                                }
+                                catch (Exception exc)
+                                {
+                                    tryCount++;
+                                    var msg = ($"  **TRIGGER GET failed Try {tryCount}: {payload.ProductName} {trigger.OggName} {trigger.TriggerName} \n{exc.Message}\n");
+                                    result.Message = msg;
+                                    await Task.Delay(50 * tryCount);
+                                }
+                            }
+                            if (!bSuccess)
+                            {
+                                /*
+                                string ouch = $"Unable to read trigger {trigger.TriggerName} for {product.ProductName} (pid = {product.ProductId}) after {tryMax} tries";
+                                _ = await Discord.SendMessage("Scan Failure", ouch).ConfigureAwait(false);
+                                LogLine($"  !!OUCH: {ouch}");
+                                successAll = false;
+                                */
+                            }
+                        }
+                    }
+                    catch (HttpRequestException)
+                    {
+                        var msg = $"  **TRIGGER GET failed on last try {payload.ProductName} {trigger.TriggerName} {trigger.OggName}";
+                        //LogLine(msg);
+                        _ = await Discord.SendMessage("Trigger Download Failure", msg);
+                    }
+                    catch (Exception exc)
+                    {
+                        //LogLine($"**ERROR: {product.ProductName} {exc.Message}");
+                    }
+                    finally
+                    {
+                        semaphore.Release();
+                    }
+                }).ToArray();
+
+                await Task.WhenAll(tasks);
+            }
+            else
+            {
+                foreach (var trigger in payload.Triggers)
+                {
+                    var tryCount = 0;
+                    var tryMax = 10;
+                    try
+                    {
+                        var start = DateTime.Now;
+
                         bool bSuccess = false;
                         while (tryCount < tryMax)
                         {
                             try
-                            {                                
-                                trigger.LengthMS = await triggerClient.GetOggLengthMS(trigger.ProductId, trigger.Location);
+                            {
+                                trigger.LengthMS = await GetOggLengthMS(trigger.ProductId, trigger.Location);
                                 trigger.WaitMS = (DateTime.Now - start).TotalMilliseconds;
                                 bSuccess = true;
                                 break;
@@ -160,25 +218,22 @@ namespace Triggerless.Services.Client
                             */
                         }
                     }
+                    catch (HttpRequestException)
+                    {
+                        var msg = $"  **TRIGGER GET failed on last try {payload.ProductName} {trigger.TriggerName} {trigger.OggName}";
+                        //LogLine(msg);
+                        _ = await Discord.SendMessage("Trigger Download Failure", msg);
+                    }
+                    catch (Exception exc)
+                    {
+                        //LogLine($"**ERROR: {product.ProductName} {exc.Message}");
+                    }
+                    finally
+                    {
+                    }
                 }
-                catch (HttpRequestException)
-                {
-                    var msg = $"  **TRIGGER GET failed on last try {payload.ProductName} {trigger.TriggerName} {trigger.OggName}";
-                    //LogLine(msg);
-                    _ = await Discord.SendMessage("Trigger Download Failure", msg);
-                }
-                catch (Exception exc)
-                {
-                    //LogLine($"**ERROR: {product.ProductName} {exc.Message}");
-                }
-                finally
-                {
-                    semaphore.Release();
-                }
-            }).ToArray();
 
-            await Task.WhenAll(tasks);
-
+            }
 
             if (!successAll)
             {
