@@ -1,5 +1,4 @@
-﻿using log4net;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
@@ -13,18 +12,14 @@ using System.Threading.Tasks;
 using Triggerless.Models;
 using Triggerless.XAFLib;
 
-
-
 namespace Triggerless.Services.Server
 {
     public class ImvuApiClient : IDisposable
     {
         private readonly ImvuApiService _service;
-        private readonly ILog _log;
 
-        public ImvuApiClient(ILog log = null)
+        public ImvuApiClient()
         {
-            _log = log;
             _service = new ImvuApiService();
         }
 
@@ -114,7 +109,7 @@ namespace Triggerless.Services.Server
         public async Task<ImvuUser> GetUserByName(string userName)
         {
             ImvuUser result = new ImvuUser { Id = -1 };
-            _log?.Debug($"{nameof(ImvuApiClient)}.{nameof(GetUserByName)}({userName})");
+            // //_log?.Debug($"{nameof(ImvuApiClient)}.{nameof(GetUserByName)}({userName})");
             //var relUri = $"/users/avatarname/{userName}";
 
             try
@@ -148,12 +143,12 @@ namespace Triggerless.Services.Server
                 JObject j = await _service.GetJObject(relUri);
                 var result = j["denormalized"].First.ElementAt(0)["data"].ToObject<ImvuUser>();
                 */
-                _log?.Debug($"Success - {nameof(ImvuApiClient)}.{nameof(GetUserByName)}({userName})");
+                // //_log?.Debug($"Success - {nameof(ImvuApiClient)}.{nameof(GetUserByName)}({userName})");
                 return result;
             }
             catch (Exception exc)
             {
-                _log?.Error("ImvuUser JSON could not be retrieved.", exc);
+                //_log?.Error("ImvuUser JSON could not be retrieved.", exc);
                 result.Message = exc.Message;
             }
             return result;
@@ -161,7 +156,7 @@ namespace Triggerless.Services.Server
 
         public async Task<ImvuUser> GetUser(long userId)
         {
-            _log?.Debug($"{nameof(ImvuApiClient)}.{nameof(GetUser)}");
+            //_log?.Debug($"{nameof(ImvuApiClient)}.{nameof(GetUser)}");
 #if USE_LOCAL
             return new ImvuUser { 
                 Id = userId,
@@ -174,12 +169,12 @@ namespace Triggerless.Services.Server
             {
                 JObject j = await _service.GetJObject(relUri);
                 var result = j["denormalized"].First.ElementAt(0)["data"].ToObject<ImvuUser>();
-                _log?.Debug($"Success - {nameof(ImvuApiClient)}.{nameof(GetUser)}");
+                // //_log?.Debug($"Success - {nameof(ImvuApiClient)}.{nameof(GetUser)}");
                 return result;
             }
             catch (Exception exc)
             {
-                _log?.Error($"Unable to get User with ID ({userId})", exc);
+                //_log?.Error($"Unable to get User with ID ({userId})", exc);
                 return new ImvuUser { Id = userId, AvatarName = "unavailable", Error = exc.Message, Status = "failed" };
             }
         }
@@ -213,24 +208,11 @@ namespace Triggerless.Services.Server
         public async Task<ImvuProductList> GetProducts(IEnumerable<long> p)
         {
             return await GetProductsExt(p);
-            /*
-            var result = new ImvuProductList();
-            // the "dumb" way
-
-
-            var list = new ConcurrentBag<ImvuProduct>();
-            foreach (var currentProductId in p)
-            {
-                list.Add(await GetProduct(currentProductId));
-            }
-            result.Products = list.ToArray();
-            return result;
-            */
         }
 
         public async Task<string> GetAvatarCardJson(string idOrName)
         {
-            _log?.Debug($"{nameof(ImvuApiClient)}.{nameof(GetAvatarCardJson)} begins");
+            // //_log?.Debug($"{nameof(ImvuApiClient)}.{nameof(GetAvatarCardJson)} begins");
             long id;
             if (!long.TryParse(idOrName, out id))
             {
@@ -239,12 +221,12 @@ namespace Triggerless.Services.Server
                 id = user.Id;
                 if (id < 1)
                 {
-                    _log?.Warn($"Avatar with name {idOrName} not found.");
+                    // //_log?.Warn($"Avatar with name {idOrName} not found.");
                     return $"\"status\": \"failed\", \"message\": \"(404) No user named {idOrName} was found\"";
                 }
             }
 
-            using (var pageClient = new ImvuPageClient(_log))
+            using (var pageClient = new ImvuPageClient())
             {
                 var json = await pageClient.GetAvatarCardJson(id);
                 return json;
@@ -405,16 +387,16 @@ namespace Triggerless.Services.Server
             {
 
                 // Get the Product list
-                _log?.Debug($"\tAcquiring contents");
+                // //_log?.Debug($"\tAcquiring contents");
                 var responseJson = await client.GetStringAsync(contentsUrl);
 
                 // cast into JSON we can deserialize
                 var json = $"{{productArray: {responseJson}}}";
-                _log?.Debug($"\tDeserializing product list");
+                // //_log?.Debug($"\tDeserializing product list");
                 productList = JsonConvert.DeserializeObject<ProductContentList>(json);
 
                 // remove any non-OGG assets
-                _log?.Debug($"\tRemoving non-OGG assets");
+                // //_log?.Debug($"\tRemoving non-OGG assets");
                 productList.productArray = productList.productArray.Where(p => p.name.ToLower().EndsWith(".ogg")).ToArray();
 
                 // in cases where url is omitted, we would use name instead. Here we'll just populate null urls for ease of use
@@ -450,7 +432,7 @@ namespace Triggerless.Services.Server
                     result.Add(entry);
                 }
             }
-            _log?.Debug($"\t{template.Actions.Count} triggers cued up.");
+            // //_log?.Debug($"\t{template.Actions.Count} triggers cued up.");
 
             return result;
         }
@@ -459,13 +441,13 @@ namespace Triggerless.Services.Server
         {
             Template result = null;
             // Get index.xml template, and deserialize using XAFLib Template class
-            _log?.Debug($"\tAcquiring index.xml");
+            // //_log?.Debug($"\tAcquiring index.xml");
             var indexUrl = RipService.GetUrl(productId, "index.xml");
 
             using (var client = new HttpClient())
             {
                 var responseText = await client.GetStringAsync(indexUrl);
-                _log?.Debug($"\tLoading Template");
+                // //_log?.Debug($"\tLoading Template");
                 try
                 {
                     result = Template.LoadXml(responseText);
@@ -476,7 +458,7 @@ namespace Triggerless.Services.Server
                     // doesn't connect to anything
                     // Just send back an empty template with ParentProductId = 80
 
-                    _log?.Error("Unable to load template", exc);
+                    // //_log?.Error("Unable to load template", exc);
                     return new Template { ParentProductID = 80 };
                 }
             }

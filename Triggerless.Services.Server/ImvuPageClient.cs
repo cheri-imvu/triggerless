@@ -1,5 +1,4 @@
-﻿using log4net;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Polly.Caching;
 using System;
 using System.Collections.Concurrent;
@@ -18,11 +17,9 @@ namespace Triggerless.Services.Server
     public class ImvuPageClient: IDisposable
     {
         private ImvuPageService _service;
-        private ILog _log;
 
-        public ImvuPageClient(ILog log = null)
+        public ImvuPageClient()
         {
-            _log = log;
             _service = new ImvuPageService();
         }
 

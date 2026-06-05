@@ -1,5 +1,4 @@
-﻿using log4net;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -13,7 +12,7 @@ namespace Triggerless.API.Controllers
 {
     public class SongInfoController: BaseController
     {
-        public static readonly ILog _log = LogManager.GetLogger(nameof(SongInfoController));
+        //public static readonly ILog _log = LogManager.GetLogger(nameof(SongInfoController));
 
         [Route("api/SongInfo/{pid}"), HttpGet]
         public HttpResponseMessage SongInfo(int pid)

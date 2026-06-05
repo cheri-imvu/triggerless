@@ -1,5 +1,4 @@
-﻿using log4net;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
@@ -11,8 +10,8 @@ namespace Triggerless.API.Controllers
     [RoutePrefix("api/radio")]
     public class RadioController : BaseController
     {
-        public static readonly ILog _log = LogManager.GetLogger(nameof(RadioController));
-        private static BootstersDbClient _dbClient = new BootstersDbClient(_log);
+        //public static readonly ILog _log = LogManager.GetLogger(nameof(RadioController));
+        private static BootstersDbClient _dbClient = new BootstersDbClient();
 
         [Route("list/{djname}/{count}"), HttpGet]
         public async Task<HttpResponseMessage> GetList(string djName, int count)

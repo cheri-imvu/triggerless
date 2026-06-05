@@ -3,14 +3,13 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Triggerless.Services.Server;
 using System.Linq;
-using log4net;
 
 namespace Triggerless.API.Controllers
 {
     public class RipLogController : BaseController
     {
-        public static readonly ILog _log = LogManager.GetLogger(nameof(RipLogController));
-        private static BootstersDbClient _dbClient = new BootstersDbClient(_log);
+        //public static readonly ILog _log = LogManager.GetLogger(nameof(RipLogController));
+        private static BootstersDbClient _dbClient = new BootstersDbClient();
 
         [HttpGet, Route("api/riplog/summary")]
         public async Task<HttpResponseMessage> RipLogSummary()

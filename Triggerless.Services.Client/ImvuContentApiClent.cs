@@ -138,7 +138,8 @@ namespace Triggerless.Services.Client
                             {
                                 try
                                 {
-                                    trigger.LengthMS = await triggerClient.GetOggLengthMS(trigger.ProductId, trigger.Location);
+                                    var pid = trigger.SourceId == 0 ? trigger.ProductId : trigger.SourceId;
+                                    trigger.LengthMS = await triggerClient.GetOggLengthMS(pid, trigger.Location);
                                     trigger.WaitMS = (DateTime.Now - start).TotalMilliseconds;
                                     bSuccess = true;
                                     break;
@@ -153,6 +154,7 @@ namespace Triggerless.Services.Client
                             }
                             if (!bSuccess)
                             {
+                                result.Message = $"At least one trigger failed to download after {tryMax} tries.";
                                 /*
                                 string ouch = $"Unable to read trigger {trigger.TriggerName} for {product.ProductName} (pid = {product.ProductId}) after {tryMax} tries";
                                 _ = await Discord.SendMessage("Scan Failure", ouch).ConfigureAwait(false);
@@ -182,6 +184,7 @@ namespace Triggerless.Services.Client
             }
             else
             {
+                // Unreachable code path for now, but keeping for reference
                 foreach (var trigger in payload.Triggers)
                 {
                     var tryCount = 0;
@@ -195,7 +198,8 @@ namespace Triggerless.Services.Client
                         {
                             try
                             {
-                                trigger.LengthMS = await GetOggLengthMS(trigger.ProductId, trigger.Location);
+                                var pid = trigger.SourceId == 0 ? trigger.ProductId : trigger.SourceId;
+                                trigger.LengthMS = await GetOggLengthMS(pid, trigger.Location);
                                 trigger.WaitMS = (DateTime.Now - start).TotalMilliseconds;
                                 bSuccess = true;
                                 break;
@@ -232,7 +236,6 @@ namespace Triggerless.Services.Client
                     {
                     }
                 }
-
             }
 
             if (!successAll)
@@ -243,6 +246,10 @@ namespace Triggerless.Services.Client
             }
             else
             {
+                foreach (var trigger in payload.Triggers)
+                {
+                   trigger.ProductId = payload.ProductId;
+                }
                 result.Triggers.AddRange(payload.Triggers);
                 var save = await dbClient.SaveProductTriggers(result.Triggers);
                 if (save.Result != ScanResultType.Success)

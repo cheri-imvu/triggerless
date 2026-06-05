@@ -1,4 +1,4 @@
-﻿using log4net;
+﻿
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -13,17 +13,11 @@ namespace Triggerless.Services.Server
 {
     public class BootstersDbClient
     {
-        private ILog _log;
-
-        public BootstersDbClient(ILog log = null)
-        {
-            _log = log;
-        }
 
         public async Task<TriggerlessPostResponse> PostSong(TriggerlessRadioSong post)
         {
-            _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(PostSong)} begin");
-            _log?.Debug($"Post: djname = {post.djName}, title = {post.title}");
+            //_log?.Debug($"{nameof(BootstersDbClient)}.{nameof(PostSong)} begin");
+            //_log?.Debug($"Post: djname = {post.djName}, title = {post.title}");
             var response = new TriggerlessPostResponse();
             if (String.IsNullOrWhiteSpace(post.djName)) post.djName = "Cheri";
 
@@ -38,21 +32,21 @@ namespace Triggerless.Services.Server
                 {
                     var recordCount = await cmd.ExecuteNonQueryAsync();
                     response.status = "success; " + (recordCount == 1 ? "added" : "exists");
-                    _log?.Debug($"Success - Upsert worked, Records updated: {recordCount}");
+                    //_log?.Debug($"Success - Upsert worked, Records updated: {recordCount}");
                 }
                 catch (Exception e)
                 {
-                    _log?.Error("The following exception occurred.", e);
+                    //_log?.Error("The following exception occurred.", e);
                     response.status = $"failed; {e.Message}";
                 }
             }
-            _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(PostSong)} finished");
+            //_log?.Debug($"{nameof(BootstersDbClient)}.{nameof(PostSong)} finished");
             return response;
         }
 
         public async Task<TriggerbotLyricsEntry> GetLyrics(long productId)
         {
-            _log?.Debug($"Get Lyrics: {productId}");
+            //_log?.Debug($"Get Lyrics: {productId}");
             var response = new TriggerbotLyricsEntry();
             using (var conn = await BootstersDbConnection.Get())
             {
@@ -98,8 +92,8 @@ namespace Triggerless.Services.Server
 
         public async Task<TriggerlessRadioSongs> GetSongs(string djName, int count)
         {
-            _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(GetSongs)} begin");
-            _log?.Debug($"Post: djname = {djName}, count = {count}");
+            //_log?.Debug($"{nameof(BootstersDbClient)}.{nameof(GetSongs)} begin");
+            //_log?.Debug($"Post: djname = {djName}, count = {count}");
 
             var response = new TriggerlessRadioSongs();
 
@@ -121,17 +115,17 @@ namespace Triggerless.Services.Server
                         }
                         response.titles = songs.ToArray();
                     }
-                    _log.Debug($"Success - {response.titles.Length} songs returned");
+                    //_log.Debug($"Success - {response.titles.Length} songs returned");
                     response.status = $"success; {response.titles.Length} song titles";
 
                 }
                 catch (Exception e)
                 {
-                    _log.Error($"Failed - {e.Message}", e);
+                    //_log.Error($"Failed - {e.Message}", e);
                     response.status = $"failed; {e.Message}";
                 }
             }
-            _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(GetSongs)} finish");
+            //_log?.Debug($"{nameof(BootstersDbClient)}.{nameof(GetSongs)} finish");
 
             return response;
 
@@ -139,8 +133,8 @@ namespace Triggerless.Services.Server
 
         public async Task<TriggerlessRadioSong> GetLastSong(string djName)
         {
-            _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(GetLastSong)} begin");
-            _log?.Debug($"Post: djname = {djName}");
+            //_log?.Debug($"{nameof(BootstersDbClient)}.{nameof(GetLastSong)} begin");
+            //_log?.Debug($"Post: djname = {djName}");
 
             var response = new TriggerlessRadioSong { djName = djName };
 
@@ -163,12 +157,12 @@ namespace Triggerless.Services.Server
                             response.title = "Not Available";
                         }
                     }
-                    _log.Debug($"Success - 1 song returned");
+                    //_log.Debug($"Success - 1 song returned");
 
                 }
                 catch (Exception e)
                 {
-                    _log.Error($"Failed - {e.Message}", e);
+                    //_log.Error($"Failed - {e.Message}", e);
                     response.title = $"failed; {e.Message}";
                 }
                 return response;
@@ -177,23 +171,23 @@ namespace Triggerless.Services.Server
 
         public async void SaveRipInfo(int productId, string ipAddress, DateTime date)
         {
-            _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(SaveRipInfo)} - productId = {productId}, ipAddress = {ipAddress}");
+            //_log?.Debug($"{nameof(BootstersDbClient)}.{nameof(SaveRipInfo)} - productId = {productId}, ipAddress = {ipAddress}");
             using (var cxn = await BootstersDbConnection.Get())
             {
                 var sql =
                     $"INSERT INTO bootsters.rip_log (productId, ipAddress, date) VALUES ({productId}, '{ipAddress}', '{date:yyyy-MM-dd HH:mm:ss}')";
-                _log?.Debug($"SQL : {sql}");
+                //_log?.Debug($"SQL : {sql}");
                 var cmd = cxn.CreateCommand();
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandText = sql;
                 var count = await cmd.ExecuteNonQueryAsync();
-                _log?.Debug($"Success - {count} records");
+                //_log?.Debug($"Success - {count} records");
             }
         }
 
         public async Task<IEnumerable<RipCountEntry>> RipLogSummary()
         {
-            _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(RipLogSummary)}");
+            //_log?.Debug($"{nameof(BootstersDbClient)}.{nameof(RipLogSummary)}");
             var result = new List<RipCountEntry>();
             using (var cxn = await BootstersDbConnection.Get())
             {
@@ -221,7 +215,7 @@ namespace Triggerless.Services.Server
 
         public async Task<IEnumerable<RipEntry>> RipLogEntriesByIp(string ipAddress)
         {
-            _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(RipLogEntriesByIp)}");
+            //_log?.Debug($"{nameof(BootstersDbClient)}.{nameof(RipLogEntriesByIp)}");
             using (var cxn = await BootstersDbConnection.Get())
             {
                 var sql =
@@ -249,7 +243,7 @@ namespace Triggerless.Services.Server
 
         public async Task<IEnumerable<RipEntry>> RipLogEntriesByUtcDate(string dateString, int hours = 24)
         {
-            _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(RipLogEntriesByUtcDate)}");
+            //_log?.Debug($"{nameof(BootstersDbClient)}.{nameof(RipLogEntriesByUtcDate)}");
             if (!DateTime.TryParse(dateString, out var startDate)) return new List<RipEntry>();
 
             using (var cxn = await BootstersDbConnection.Get())
@@ -282,7 +276,7 @@ namespace Triggerless.Services.Server
 
         public async Task<IEnumerable<RipEntryExt>> RipLogEntriesByIpExt(string ipAddress)
         {
-            _log?.Debug($"{nameof(BootstersDbClient)}.{nameof(RipLogEntriesByIpExt)} IP: {ipAddress}");
+            //_log?.Debug($"{nameof(BootstersDbClient)}.{nameof(RipLogEntriesByIpExt)} IP: {ipAddress}");
 
             using (var cxn = await BootstersDbConnection.Get())
             {
@@ -435,6 +429,7 @@ namespace Triggerless.Services.Server
 
         private const string PRODUCTS_TABLE = "dbo.TriggerbotProducts";
         private const string TRIGGERS_TABLE = "dbo.TriggerbotTriggers";
+        private const string OUTFITS_REQUEST_TABLE = "dbo.OutfitRequests";
         public async Task<CollectorResponsePayload> LookupProductTriggers(ProductRecord payload)
         {
             var result = new CollectorResponsePayload
@@ -467,13 +462,13 @@ namespace Triggerless.Services.Server
                     @ImageLocation, @ImageBytes, @DateCreated, @AddedBy)";
                     int changeCount = await cxn.ExecuteAsync(sql, new
                     {
-                        @ProductId = payload.ProductId,
-                        @ProductName = payload.ProductName,
-                        @CreatorName = payload.CreatorName,
-                        @ImageLocation = payload.ImageLocation,
-                        @ImageBytes = payload.ImageBytes,
-                        @DateCreated = DateTime.UtcNow,
-                        @AddedBy = payload.AddedBy
+                        payload.ProductId,
+                        payload.ProductName,
+                        payload.CreatorName,
+                        payload.ImageLocation,
+                        payload.ImageBytes,
+                        DateCreated = DateTime.UtcNow,
+                        payload.AddedBy
                     });
                 }
                 else
@@ -487,12 +482,12 @@ namespace Triggerless.Services.Server
                     WHERE ProductId = @ProductId";
                     int changeCount = await cxn.ExecuteAsync(sql, new
                     {
-                        @ProductId = payload.ProductId,
-                        @ProductName = payload.ProductName,
-                        @CreatorName = payload.CreatorName,
-                        @ImageLocation = payload.ImageLocation,
-                        @ImageBytes = payload.ImageBytes,
-                        @AddedBy = payload.AddedBy
+                        payload.ProductId,
+                        payload.ProductName,
+                        payload.CreatorName,
+                        payload.ImageLocation,
+                        payload.ImageBytes,
+                        payload.AddedBy
                     });
                 }
 
@@ -559,6 +554,16 @@ namespace Triggerless.Services.Server
             } // dispose connection
 
             return result;
+        }
+
+        public async Task<bool> SaveOutfitsRequest(long customerId, string request)
+        {
+            using (var cxn = await BootstersDbConnection.Get())
+            {
+                var sql = $@"INSERT INTO {OUTFITS_REQUEST_TABLE} (customerId, request) VALUES (@customerId, @request)";
+                var count = await cxn.ExecuteAsync(sql, new { customerId, request });
+                return count == 1;
+            }
         }
     }
 }

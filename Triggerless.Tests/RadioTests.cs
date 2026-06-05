@@ -6,15 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Triggerless.Services.Server;
 using Triggerless.Models;
-using log4net;
 
 namespace Triggerless.Tests
 {
     [TestFixture]
     public class RadioTests
     {
-        public static readonly ILog _log = LogManager.GetLogger(nameof(RadioTests));
-        private static BootstersDbClient _dbClient = new BootstersDbClient(_log);
+        //public static readonly ILog _log = LogManager.GetLogger(nameof(RadioTests));
+        private static BootstersDbClient _dbClient = new BootstersDbClient();
 
         [Test]
         public async Task GetSongsTest()

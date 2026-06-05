@@ -1,21 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Linq;
-using System.Net.Http;
-using Triggerless.Models;
-using Triggerless.XAFLib;
-//using static Triggerless.Services.Server.NVorbisService;
-using log4net;
+﻿//using static Triggerless.Services.Server.NVorbisService;
 
 namespace Triggerless.Services.Server
 {
     public class RipService
     {
-        private ILog _log;
 
-        public RipService(ILog log = null)
+        public RipService()
         {
-            _log = log;
         }
         public static string GetUrlTemplate(long pid) => $"https://userimages-akm.imvu.com/productdata/{pid}/1/{{0}}";
 

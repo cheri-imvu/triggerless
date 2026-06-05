@@ -12,8 +12,6 @@ using System.Web.Http;
 using Triggerless.API.Models;
 using static Triggerless.API.Models.Discord;
 
-[assembly: log4net.Config.XmlConfigurator(Watch = true)]
-
 namespace Triggerless.API.Controllers
 {
     public class BaseController: ApiController
