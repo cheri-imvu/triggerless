@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <title>PHP CORS TEST</title>
+    </head>
+    <body>
+        <script>
+            function execute() {
+                let url = 'products.php?p=12378975&p=34523467'
+                fetch(url)
+                  .then(res => res.json())
+                  .then(change => {
+                    document.getElementById('result').innerText = JSON.stringify(change)
+                  })
+            }
+
+        </script>
+        <button id="btn" onclick="execute()">
+            Start
+        </button>
+        <textarea cols="50" rows="8" id="result"></textarea>
+    </body>
+</html>

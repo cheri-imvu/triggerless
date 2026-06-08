@@ -1,0 +1,137 @@
+@font-face {
+    font-family: 'LibSans';
+    src: url('https://www.triggerless.com/f/LiberationSans-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+body {
+  font-family: LibSans, sans-serif;
+  background-color: hsl(205, 35%, 12%);
+  color: #EEEEEE;
+  margin: 0;
+  padding: 20px;
+}
+
+header {
+  display: flex;
+  flex-direction: row;
+  justify-items: center;
+  align-items: center;
+  gap: 200px;
+}
+
+.banner-image {
+  margin-left: 220px;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 15px;
+}
+
+#input {
+  min-width: 500px;
+  min-height: 150px;
+}
+
+#loading {
+  display: none;
+}
+
+.input-controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 15px;
+}
+
+button {
+  min-width: 70px;
+  min-height: 40px;
+  font-size: 1.1em;
+}
+
+.outfit-header {
+  min-height: 15px;
+  width: 300px;
+  padding: 4px;
+  border: #666 1px solid;
+  border-radius: 8px;
+}
+
+.expander {
+  font-size: 1.8em;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.display {
+  font-size: 1.4em;
+}
+
+.products {
+  display: flex;
+  flex-direction: row;   /* default, but explicit is fine */
+  align-items: flex-start;
+  gap: 10px;             /* spacing between img and info */
+  flex-wrap: wrap;
+}
+
+.product {
+  max-width: 190px;
+  border: hsl(205, 100%, 55%) 1px solid;
+  border-radius: 5px;
+  background-color: hsl(205, 100%, 18%);
+  padding: 4px;
+}
+
+
+
+.product-info {
+  display: flex;
+  flex-direction: column;  /* top → bottom */
+  flex: 1;                 /* take remaining space */
+  min-width: 0;   /* VERY important in flexbox */
+}
+
+.product-details {
+  display: flex;
+  align-items: center;
+}
+
+.product-price {
+  margin-top: 2px;
+  margin-bottom: 2px;
+  margin-left: auto;  /* pushes it all the way right */
+  padding: 2px;
+  font-weight: bold;
+}
+
+.product img {
+  width: 100px;   /* or whatever */
+  height: auto;
+  display: block;
+}
+
+.product-name, .creator {
+  white-space: nowrap;      /* prevent wrapping */
+  overflow: hidden;         /* hide overflow */
+  text-overflow: ellipsis;  /* show ... */
+  max-width: 200px;
+}
+
+.product-name a, .creator a {
+  color: #EECC00;
+}
+
+.product-ap {
+  background-color: hsl(345, 82%, 30%);
+  color: white;
+  font-weight: bold;
+  padding: 2px;
+  margin: 2px;
+}
