@@ -113,13 +113,13 @@ namespace Triggerless.Services.Client
             };
             //result.Triggers.AddRange(payload.Triggers); do this last
 
-            const bool parallel = true;
+            const bool parallel = false;
 
             bool successAll = true;
             if (parallel)
             {
                 var processorCount = Environment.ProcessorCount;
-                int maxThreads = 2 * processorCount / 3;
+                int maxThreads = 1 * processorCount / 3;
                 var semaphore = new SemaphoreSlim(maxThreads);
 
                 var tasks = payload.Triggers.Select(async trigger =>
