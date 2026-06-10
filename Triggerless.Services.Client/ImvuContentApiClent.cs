@@ -89,10 +89,62 @@ namespace Triggerless.Services.Client
             return -1 * tryCount;
         }
 
-        public async Task<CollectorResponsePayload> GetOggLengthsMS(CollectorPayload payload)
+        private double GetOggLengthMSSync(long productId, string oggLocation)
         {
+            var url = $"{productId}/1/{oggLocation}";
+            int tryCount = 0;
+            const int TRY_MAX = 10;
+            const int TIMEOUT = 1000;
+
+            while (tryCount < TRY_MAX)
+            {
+                try
+                {
+                    var bytes = _service.GetBytesSync(url);
+                    using (var ms = new MemoryStream(bytes))
+                    {
+                        ms.Position = 0; // rewind before reading
+
+                        using (var vorb = new VorbisWaveReader(ms, false)) // don't close ms automatically
+                        {
+                            return vorb.TotalTime.TotalMilliseconds;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    tryCount++;
+                    Thread.Sleep(TIMEOUT);
+                }
+            }
+            return -1 * tryCount;
+
+        }
+
+        public CollectorResponsePayload GetOggLengthsMS(CollectorPayload payload)
+        {
+
+            const bool parallel = false;
+
             var dbClient = new BootstersDbClient();
-            var existing = await dbClient.LookupProductTriggers(payload);
+            CollectorResponsePayload existing = null;
+
+            if (parallel)
+            {
+                /*
+                // In parallel mode, we want to check for existing triggers before doing any work, to avoid unnecessary parallel processing
+                existing = await dbClient.LookupProductTriggers(payload);
+                if (existing.Triggers.Any())
+                {
+                    return existing;
+                }
+                */
+            } 
+            else
+            {
+                existing = dbClient.LookupProductTriggers(payload);
+            }
+
             if (existing.Triggers.Any())
             {
                 return existing;
@@ -113,11 +165,11 @@ namespace Triggerless.Services.Client
             };
             //result.Triggers.AddRange(payload.Triggers); do this last
 
-            const bool parallel = false;
 
             bool successAll = true;
             if (parallel)
             {
+                /*
                 var processorCount = Environment.ProcessorCount;
                 int maxThreads = 1 * processorCount / 3;
                 var semaphore = new SemaphoreSlim(maxThreads);
@@ -155,12 +207,12 @@ namespace Triggerless.Services.Client
                             if (!bSuccess)
                             {
                                 result.Message = $"At least one trigger failed to download after {tryMax} tries.";
-                                /*
-                                string ouch = $"Unable to read trigger {trigger.TriggerName} for {product.ProductName} (pid = {product.ProductId}) after {tryMax} tries";
-                                _ = await Discord.SendMessage("Scan Failure", ouch).ConfigureAwait(false);
-                                LogLine($"  !!OUCH: {ouch}");
-                                successAll = false;
-                                */
+                                
+                                //string ouch = $"Unable to read trigger {trigger.TriggerName} for {product.ProductName} (pid = {product.ProductId}) after {tryMax} tries";
+                                //_ = await Discord.SendMessage("Scan Failure", ouch).ConfigureAwait(false);
+                                //LogLine($"  !!OUCH: {ouch}");
+                                //successAll = false;
+                                
                             }
                         }
                     }
@@ -180,9 +232,10 @@ namespace Triggerless.Services.Client
                     }
                 }).ToArray();
 
-                await Task.WhenAll(tasks);
+                await Task.WhenAll(tasks);                
+*/
             }
-            else
+            else // not parallel
             {
                 // Unreachable code path for now, but keeping for reference
                 foreach (var trigger in payload.Triggers)
@@ -199,7 +252,7 @@ namespace Triggerless.Services.Client
                             try
                             {
                                 var pid = trigger.SourceId == 0 ? trigger.ProductId : trigger.SourceId;
-                                trigger.LengthMS = await GetOggLengthMS(pid, trigger.Location);
+                                trigger.LengthMS = GetOggLengthMSSync(pid, trigger.Location);
                                 trigger.WaitMS = (DateTime.Now - start).TotalMilliseconds;
                                 bSuccess = true;
                                 break;
@@ -209,24 +262,24 @@ namespace Triggerless.Services.Client
                                 tryCount++;
                                 var msg = ($"  **TRIGGER GET failed Try {tryCount}: {payload.ProductName} {trigger.OggName} {trigger.TriggerName} \n{exc.Message}\n");
                                 result.Message = msg;
-                                await Task.Delay(50 * tryCount);
+                                Thread.Sleep(50 * tryCount);
                             }
                         }
                         if (!bSuccess)
                         {
                             /*
-                            string ouch = $"Unable to read trigger {trigger.TriggerName} for {product.ProductName} (pid = {product.ProductId}) after {tryMax} tries";
-                            _ = await Discord.SendMessage("Scan Failure", ouch).ConfigureAwait(false);
                             LogLine($"  !!OUCH: {ouch}");
-                            successAll = false;
                             */
+                            string ouch = $"Unable to read trigger {trigger.TriggerName} for {payload.ProductName} (pid = {payload.ProductId}) after {tryMax} tries";
+                            Discord.SendMessage("Scan Failure", ouch).Wait();
+                            successAll = false;
                         }
                     }
                     catch (HttpRequestException)
                     {
                         var msg = $"  **TRIGGER GET failed on last try {payload.ProductName} {trigger.TriggerName} {trigger.OggName}";
                         //LogLine(msg);
-                        _ = await Discord.SendMessage("Trigger Download Failure", msg);
+                        _ = Discord.SendMessage("Trigger Download Failure", msg).Result;
                     }
                     catch (Exception exc)
                     {
@@ -251,7 +304,7 @@ namespace Triggerless.Services.Client
                    trigger.ProductId = payload.ProductId;
                 }
                 result.Triggers.AddRange(payload.Triggers);
-                var save = await dbClient.SaveProductTriggers(result.Triggers);
+                var save = dbClient.SaveProductTriggers(result.Triggers);
                 if (save.Result != ScanResultType.Success)
                 {
                     result.Result = save.Result;

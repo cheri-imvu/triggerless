@@ -430,7 +430,7 @@ namespace Triggerless.Services.Server
         private const string PRODUCTS_TABLE = "dbo.TriggerbotProducts";
         private const string TRIGGERS_TABLE = "dbo.TriggerbotTriggers";
         private const string OUTFITS_REQUEST_TABLE = "dbo.OutfitRequests";
-        public async Task<CollectorResponsePayload> LookupProductTriggers(ProductRecord payload)
+        public CollectorResponsePayload LookupProductTriggers(ProductRecord payload)
         {
             var result = new CollectorResponsePayload
             {
@@ -446,13 +446,13 @@ namespace Triggerless.Services.Server
 
             ProductRecord existingProduct = null;
             List<TriggerEntry> existingTriggers = new List<TriggerEntry>();
-            using (var cxn = await BootstersDbConnection.Get())
+            using (var cxn = BootstersDbConnection.GetSync())
             {
                 var sql = $"select * from {PRODUCTS_TABLE} WHERE ProductId = @productId";
-                existingProduct = await cxn.QuerySingleOrDefaultAsync<ProductRecord>(sql, new { productId = payload.ProductId });
+                existingProduct = cxn.QuerySingleOrDefaultAsync<ProductRecord>(sql, new { productId = payload.ProductId }).Result;
 
                 sql = $"select * from {TRIGGERS_TABLE} WHERE ProductId = @productId";
-                existingTriggers.AddRange(await cxn.QueryAsync<TriggerEntry>(sql, new { productId = payload.ProductId }));
+                existingTriggers.AddRange(cxn.QueryAsync<TriggerEntry>(sql, new { productId = payload.ProductId }).Result);
 
                 if (existingProduct == null) // this is new so let's add all the stuff we can't get here
                 {
@@ -460,7 +460,7 @@ namespace Triggerless.Services.Server
                     ImageLocation, ImageBytes, DateCreated, AddedBy) VALUES 
                     (@ProductId, @ProductName, @CreatorName, 
                     @ImageLocation, @ImageBytes, @DateCreated, @AddedBy)";
-                    int changeCount = await cxn.ExecuteAsync(sql, new
+                    int changeCount = cxn.Execute(sql, new
                     {
                         payload.ProductId,
                         payload.ProductName,
@@ -480,7 +480,7 @@ namespace Triggerless.Services.Server
                     ImageBytes = @ImageBytes,
                     AddedBy = @AddedBy
                     WHERE ProductId = @ProductId";
-                    int changeCount = await cxn.ExecuteAsync(sql, new
+                    int changeCount = cxn.Execute(sql, new
                     {
                         payload.ProductId,
                         payload.ProductName,
@@ -510,7 +510,7 @@ namespace Triggerless.Services.Server
             return result;
         }
 
-        public async Task<ScanResult> SaveProductTriggers(List<TriggerEntry> triggers)
+        public ScanResult SaveProductTriggers(List<TriggerEntry> triggers)
         {
             if (!triggers.Any())
             {
@@ -530,7 +530,7 @@ namespace Triggerless.Services.Server
                 ProductId = triggers.First().ProductId
             };
 
-            using (var cxn = await BootstersDbConnection.Get())
+            using (var cxn = BootstersDbConnection.GetSync())
             {
                 // there shouldn't be any cached yet, this is a sanity check
                 var sql = $@"DELETE FROM {TRIGGERS_TABLE} WHERE ProductId = @ProductId;";
@@ -543,7 +543,7 @@ namespace Triggerless.Services.Server
                 Sequence, Prefix, LengthMS, WaitMS) VALUES
                 (@ProductId, @TriggerName, @OggName, @Location,
                 @Sequence, @Prefix, @LengthMS, @WaitMS);";
-                var insertedCount = await cxn.ExecuteAsync(sql, triggers);
+                var insertedCount = cxn.Execute(sql, triggers);
                 result.Message = $"{triggers.Count} triggers were supplied and all {insertedCount} were saved.";
                 if (insertedCount != triggers.Count)
                 {

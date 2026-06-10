@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
+﻿using System.Data.SqlClient;
 using System.Threading.Tasks;
 using System.Configuration;
 
@@ -16,9 +12,15 @@ namespace Triggerless.Services.Server
             var connStr = ConfigurationManager.ConnectionStrings["bootsters_db"].ConnectionString;
             var result = new SqlConnection(connStr);
             await result.OpenAsync();
-
-
             return result;
         }
-    }
+
+        public static SqlConnection GetSync()
+        {
+            var connStr = ConfigurationManager.ConnectionStrings["bootsters_db"].ConnectionString;
+            var result = new SqlConnection(connStr);
+            result.Open();
+            return result;
+        }
+}
 }

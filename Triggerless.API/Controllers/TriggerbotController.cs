@@ -121,7 +121,7 @@ namespace Triggerless.API.Controllers
             var result = new CollectorResponsePayload();
             using (var client = new ImvuContentApiClent())
             {
-                result = await client.GetOggLengthsMS(payload);
+                result = client.GetOggLengthsMS(payload);
             }
             return result;
         }

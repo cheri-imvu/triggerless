@@ -29,6 +29,12 @@ namespace Triggerless.Services.Common
             return result;
         }
 
+        public byte[] GetBytesSync(string relativeUri)
+        {
+            var result = _client?.GetByteArrayAsync(relativeUri).Result;
+            return result;
+        }
+
         public async Task<string[]> GetLines(string relativeUri)
         {
             var text = await _client?.GetStringAsync(relativeUri);
