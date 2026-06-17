@@ -6,7 +6,7 @@ $id = $_GET["id"];
 
 // Replace 'https://example.com/api/endpoint' with the actual URL of the remote server's API endpoint
 $local_api_url = "https://localhost:61120/api/user/${id}"; #local-debug
-$remote_api_url = "https://triggerless.com/api/user/${id}"; #production
+$remote_api_url = "https://www.triggerless.com/api/user/${id}"; #production
 
 
 // Make the HTTPS request to the remote server and get the JSON data

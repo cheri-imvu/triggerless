@@ -1,5 +1,5 @@
 import Header from './components/Header'
-import Outfits from './components/Outfits'
+import Outfits from './components/Outfits-new'
 import './App.css'
 
 const App = () => {

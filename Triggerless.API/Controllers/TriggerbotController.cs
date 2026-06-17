@@ -1,4 +1,5 @@
 ﻿using NAudio.Vorbis;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -18,6 +19,7 @@ namespace Triggerless.API.Controllers
         public async Task<IHttpActionResult> RecordEvent(short eventId)
         {
             var jsonText = await Request.Content.ReadAsStringAsync(); // raw body
+            dynamic request = JsonConvert.DeserializeObject<dynamic>(jsonText);
 
             IHttpActionResult result = Ok("Nothing yet");
             var location = "Internal Network";
@@ -33,6 +35,11 @@ namespace Triggerless.API.Controllers
                     // don't stop for this burp
                     location = "Unknown Location";
                 }
+                request.Location = location;
+            } 
+            else
+            {
+                request.Location = "Localhost";
             }
             var cid = CustomerID ?? 0;
             BootstersDbClient.EventType eventType = (BootstersDbClient.EventType)eventId;
@@ -42,6 +49,7 @@ namespace Triggerless.API.Controllers
             Exception exception = null;
             try
             {
+                jsonText = JsonConvert.SerializeObject(request);
                 dbResult = await dbClient.SaveEventAsync(eventType, cid, jsonText);
             }
             catch (Exception ex) 

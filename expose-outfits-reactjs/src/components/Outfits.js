@@ -3,7 +3,7 @@ import Avatar from "./Avatar"
 import { useState } from 'react'
 import './Outfits.css'
 import Room from "./Room"
-import TriggerView from "./TriggerView"
+// import TriggerView from "./TriggerView"
 
 const Outfits = () => {
 
@@ -48,16 +48,6 @@ const Outfits = () => {
             room: [...prevState.room, roomData]
         }));
         console.log(state)
-        /*        
-        const roomState = {
-            avatars: [...state.avatars],
-            room: [...state.room, roomData],
-            apHidden: getApHidden()
-        }
-        console.log(roomState)
-        setState(roomState)
-        */
-        
     
         // Concurrency limit logic
         const limit = 10; // Limit to 10 concurrent fetches
@@ -73,15 +63,7 @@ const Outfits = () => {
                 avatars: [...prevState.avatars, currentUser]
             }));
             console.log(state)
-            /*
-            newState = { 
-                avatars: [...newState.avatars, currentUser], 
-                room: [...state.room], 
-                apHidden: getApHidden() 
-            };
-            console.log(newState);
-            setState(newState);
-            */
+
         };
     
         const chunkArray = (array, size) => {
@@ -103,7 +85,6 @@ const Outfits = () => {
     return (
         <>
         <div>How to use this...</div>
-        <TriggerView></TriggerView>
 
         <ol>
             <li>In IMVU Client, right-click anywhere in the room, and select "View products in this scene".</li>
@@ -146,7 +127,7 @@ const Outfits = () => {
                         <ul style={{textAlign: 'left'}}>30 avatars / 1026 products:
                             <li>Triggerless: 7 secs, shows AP &amp; Hidden</li>
                             <li>IMVUKSA: 1:30 min, no AP or Hidden</li>
-                            <li>All others: Offline or monthly fee</li>
+                            <li>FindGu: Broken</li>
                         </ul>
                     </div>
                 </td>
